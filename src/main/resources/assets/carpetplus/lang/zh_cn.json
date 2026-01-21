@@ -36,5 +36,5 @@
   "carpet.rule.EquipmentUnbreak.name": "装备不消耗耐久",
   "carpet.rule.EquipmentUnbreak.desc": "装备不消耗耐久",
   "carpet.rule.ShulkerBoxNested.name": "潜影盒嵌套",
-  "carpet.rule.ShulkerBoxNested.desc": "允许潜影盒放在潜影盒里"
+  "carpet.rule.ShulkerBoxNested.desc": "可选被谁操作:仅玩家,仅漏斗发射器,或者全部"
 }

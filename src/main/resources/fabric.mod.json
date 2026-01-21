@@ -5,8 +5,11 @@
   "name": "CarpetPlus",
   "description": "随便写的一些小功能",
   "authors": ["ohhapple"],
-  "contact": {},
-  "license": "All-Rights-Reserved",
+  "contact": {
+    "sources": "https://github.com/ohhapple/CarpetPlus",
+    "issues": "https://github.com/ohhapple/CarpetPlus/issues"
+  },
+  "license": "LGPL-3.0",
   "icon": "assets/carpetplus/icon.png",
   "environment": "*",
   "entrypoints": {

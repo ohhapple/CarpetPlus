@@ -37,5 +37,5 @@
   "carpet.rule.EquipmentUnbreak.name": "equipmentDoesNotConsumeDurability",
   "carpet.rule.EquipmentUnbreak.desc": "equipmentDoesNotConsumeDurability",
   "carpet.rule.ShulkerBoxNested.name": "shulkerBoxNesting",
-  "carpet.rule.ShulkerBoxNested.desc": "Allow the Shulker Box to be placed in the Shulker Box"
+  "carpet.rule.ShulkerBoxNested.desc": "Choose whether shulker boxes can be placed inside other shulker boxes by players or by hoppers or both"
 }

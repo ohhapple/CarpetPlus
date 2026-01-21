@@ -13,7 +13,7 @@
 /carpet StackableEnchantedBook [int default=1] 附魔书可堆叠
 /carpet StackableTotemOfUndying [int default=1] 不死图腾可堆叠
 /carpet EquipmentUnbreak [boolean default=false] 装备不消耗耐久
-/carpet ShulkerBoxNested [boolean default=false] 潜影盒嵌套
+/carpet ShulkerBoxNested [String default="false"] 潜影盒嵌套(可选被谁操作:仅玩家,仅漏斗发射器,或者全部)
 关于玩家独立视距范围的指令：
     启用功能
     /carpet playerSpecificChunks true

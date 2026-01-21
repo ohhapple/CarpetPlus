@@ -48,7 +48,7 @@ public class ohhappleinit implements CarpetExtension {
     @Override
     public void onGameStarted() {
         // 让我们用 /carpet 来处理我们为数不多的简单设置
-        LOGGER.info("CarpetPlus loaded! Made By ohhapple");
+        LOGGER.info("{} v{} loaded!", fancyName, CarpetPlus.getVersion());
         LOGGER.info("Open Source: https://github.com/ohhapple/CarpetPlus");
         LOGGER.info("Issues: https://github.com/ohhapple/CarpetPlus/issues");
 //        LOGGER.info("Wiki: ");
@@ -120,10 +120,10 @@ public class ohhappleinit implements CarpetExtension {
         return CarpetPlusTranslations.getTranslationFromResourcePath(lang);
     }
     public void registerCustomRecipes(Map<ResourceLocation, Recipe<?>> map, HolderLookup.Provider wrapperLookup) {
-        PlusRecipeManager amsRecipeManager = new PlusRecipeManager(PlusRecipeBuilder.getInstance());
+        PlusRecipeManager plusRecipeManager = new PlusRecipeManager(PlusRecipeBuilder.getInstance());
         PlusRecipeManager.clearRecipeListMemory(PlusRecipeBuilder.getInstance());
         CarpetPlusCustomRecipes.getInstance().buildRecipes();
-        amsRecipeManager.registerRecipes(map, wrapperLookup);
+        plusRecipeManager.registerRecipes(map, wrapperLookup);
     }
 
     public void afterServerLoadWorlds(MinecraftServer server) {

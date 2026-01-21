@@ -163,8 +163,9 @@ public class CarpetPlusSettings
     //--------------------------------------------------------------------------------------
     //潜影盒嵌套
     @Rule(
+            options = {"false","player", "redstone","both"},
             categories = {OHHAPPLE, FEATURE}
     )
-    public static boolean ShulkerBoxNested = false;
+    public static String ShulkerBoxNested = "false";
 
 }

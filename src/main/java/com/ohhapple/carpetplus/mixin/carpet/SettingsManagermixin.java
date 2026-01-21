@@ -2,6 +2,7 @@ package com.ohhapple.carpetplus.mixin.carpet;
 
 import carpet.CarpetServer;
 import carpet.api.settings.SettingsManager;
+import com.ohhapple.carpetplus.CarpetPlus;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
@@ -30,8 +31,8 @@ public abstract class SettingsManagermixin {
         if ((Object) this == CarpetServer.settingsManager) {
             MutableComponent message = Component.empty();
             message.append(Component.literal("CarpetPlus ").withStyle(ChatFormatting.GRAY));
-            message.append(Component.literal("Made By: ").withStyle(ChatFormatting.GRAY));
-            message.append(Component.literal("ohhapple").withStyle(ChatFormatting.GRAY));
+            message.append(Component.literal("版本: ").withStyle(ChatFormatting.GRAY));
+            message.append(Component.literal(CarpetPlus.getVersion()).withStyle(ChatFormatting.GRAY));
 
             source.sendSuccess(() -> message, false);
         }
