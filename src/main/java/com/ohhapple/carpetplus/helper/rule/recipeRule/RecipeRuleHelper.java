@@ -1,3 +1,23 @@
+/*
+ * This file is part of the CarpetPlus project, licensed under the
+ * GNU Lesser General Public License v3.0
+ *
+ * Copyright (C) 2026 ohhapple and contributors
+ *
+ * CarpetPlus is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CarpetPlus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.ohhapple.carpetplus.helper.rule.recipeRule;
 
 import com.ohhapple.carpetplus.CarpetPlus;
@@ -26,7 +46,7 @@ public class RecipeRuleHelper {
             Collection<RecipeHolder<?>> allRecipes = getServerRecipeManager(server).getRecipes();
             for (RecipeHolder<?> recipe : allRecipes) {
                 //location()在26.1后为identifier()
-                if (recipe.id().location().getNamespace().equals(MOD_ID) && !player.getRecipeBook().contains(recipe.id())) {
+                if (recipe.id().identifier().getNamespace().equals(MOD_ID) && !player.getRecipeBook().contains(recipe.id())) {
                     player.awardRecipes(List.of(recipe));
                 }
             }
@@ -42,7 +62,7 @@ public class RecipeRuleHelper {
                 Collection<RecipeHolder<?>> allRecipes = getServerRecipeManager(server).getRecipes();
                 for (RecipeHolder<?> recipe : allRecipes) {
                     //location()在26.1后为identifier()
-                    if (recipe.id().location().getNamespace().equals(MOD_ID)) {
+                    if (recipe.id().identifier().getNamespace().equals(MOD_ID)) {
                         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                             if (!player.getRecipeBook().contains(recipe.id())) {
                                 player.awardRecipes(List.of(recipe));

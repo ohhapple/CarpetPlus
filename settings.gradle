@@ -1,31 +1,39 @@
+import groovy.json.JsonSlurper
+
 pluginManagement {
+    def pluginMappings = [
+            "com.replaymod.preprocess" : "com.github.Fallen-Breath:preprocessor"
+    ]
+
     repositories {
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
         maven {
-            url = "https://maven.kikugie.dev/snapshots"
-            name = "KikuGie Snapshots"
+            name = 'Jitpack'
+            url = "https://jitpack.io"
         }
+        mavenCentral()
         gradlePluginPortal()
     }
-}
 
-plugins {
-    id("dev.kikugie.stonecutter").version "0.8.2"
-}
-
-
-stonecutter {
-    // Enable Groovy DSL, as Stonecutter uses Kotlin by default
-    kotlinController = false
-    centralScript = "build.gradle"
-
-    // Configuration goes here
-    // The root project is the Tree
-    create(getRootProject()) {
-        versions "1.21.10"
-        vcsVersion = "1.21.10"
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.id) {
+                case { pluginMappings.containsKey(it) } :
+                    useModule("${pluginMappings[requested.id.id]}:${requested.version}")
+                    break
+            }
+        }
     }
+}
+
+def versionsFilePath = 'minecraftVersions' + '.json'
+def versions = new JsonSlurper().parseText(file(versionsFilePath).text)
+versions.versions.each {
+    version -> include(":$version")
+        def proj = project(":$version")
+        proj.projectDir = file("versions/$version")
+        proj.buildFileName = "../../common.gradle"
 }

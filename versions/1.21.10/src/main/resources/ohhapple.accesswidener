@@ -1,3 +1,0 @@
-accessWidener	v1	named
-# accessible method net/minecraft/server/level/ChunkMap updateChunkTracking (Lnet/minecraft/server/level/ServerPlayer;)V
-# accessible method net/minecraft/resources/ResourceLocation <init> (Ljava/lang/String;Ljava/lang/String;)V

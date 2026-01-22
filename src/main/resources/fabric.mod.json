@@ -22,15 +22,12 @@
     ]
   },
   "mixins": [
-    "carpetplus.mixins.json",
-    {
-      "config": "carpetplus.client.mixins.json",
-      "environment": "client"
-    }
+    "carpetplus.mixins.json"
+
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=0.15.11",
+    "minecraft": "${minecraft_dependency}",
     "carpet": ">=1.4.169"
   },
   "accessWidener": "ohhapple.accesswidener"

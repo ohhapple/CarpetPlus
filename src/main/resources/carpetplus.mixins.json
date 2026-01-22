@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.ohhapple.carpetplus.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "/*JAVA_VERSION*/",
   "mixins": [
     "ChunkMapMixin",
     "ItemStackMixin",
@@ -13,9 +13,11 @@
     "hooks.recipe.RecipeManagerAccessor",
     "hooks.recipe.RecipeManagerMixin",
     "hooks.server.MinecraftServerMixin",
+    "ohhapple.ChunkMapInvoker",
     "ShulkerBoxNested.BlockItemMixin",
-    "ShulkerBoxNested.ShulkerBoxBlockEntityMixin",
-    "ohhapple.ChunkMapInvoker"
+    "ShulkerBoxNested.ShulkerBoxBlockEntityMixin"
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

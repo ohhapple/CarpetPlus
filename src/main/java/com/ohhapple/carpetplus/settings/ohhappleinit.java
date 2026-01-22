@@ -1,3 +1,23 @@
+/*
+ * This file is part of the CarpetPlus project, licensed under the
+ * GNU Lesser General Public License v3.0
+ *
+ * Copyright (C) 2026 ohhapple and contributors
+ *
+ * CarpetPlus is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CarpetPlus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.ohhapple.carpetplus.settings;
 
 import carpet.CarpetExtension;
@@ -14,7 +34,7 @@ import com.ohhapple.carpetplus.utils.MinecraftServerUtil;
 import com.ohhapple.carpetplus.utils.PlayerChunkLoader;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
@@ -119,7 +139,7 @@ public class ohhappleinit implements CarpetExtension {
     {
         return CarpetPlusTranslations.getTranslationFromResourcePath(lang);
     }
-    public void registerCustomRecipes(Map<ResourceLocation, Recipe<?>> map, HolderLookup.Provider wrapperLookup) {
+    public void registerCustomRecipes(Map<Identifier, Recipe<?>> map, HolderLookup.Provider wrapperLookup) {
         PlusRecipeManager plusRecipeManager = new PlusRecipeManager(PlusRecipeBuilder.getInstance());
         PlusRecipeManager.clearRecipeListMemory(PlusRecipeBuilder.getInstance());
         CarpetPlusCustomRecipes.getInstance().buildRecipes();

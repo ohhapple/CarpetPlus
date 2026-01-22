@@ -1,3 +1,23 @@
+/*
+ * This file is part of the CarpetPlus project, licensed under the
+ * GNU Lesser General Public License v3.0
+ *
+ * Copyright (C) 2026 ohhapple and contributors
+ *
+ * CarpetPlus is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CarpetPlus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.ohhapple.carpetplus.CustomRecipes;
 
 import com.google.gson.JsonElement;
@@ -14,7 +34,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -32,13 +52,13 @@ public class PlusRecipeManager {
         this.smeltingRecipes = builder.getSmeltingRecipeList();
     }
 
-    public void registerRecipes(Map<ResourceLocation, Recipe<?>> map, HolderLookup.Provider wrapperLookup) {
-        Map<ResourceLocation, JsonElement> recipeMap = new HashMap<>();
+    public void registerRecipes(Map<Identifier, Recipe<?>> map, HolderLookup.Provider wrapperLookup) {
+        Map<Identifier, JsonElement> recipeMap = new HashMap<>();
         registerAllRecipes(recipeMap);
         recipeMap.forEach((id, json) -> addRecipe(map, wrapperLookup, id, json));
     }
 
-    private void addRecipe(Map<ResourceLocation, Recipe<?>> map, HolderLookup.Provider wrapperLookup, ResourceLocation id, JsonElement json) {
+    private void addRecipe(Map<Identifier, Recipe<?>> map, HolderLookup.Provider wrapperLookup, Identifier id, JsonElement json) {
         RecipeHolder<?> recipeEntry = this.deserializeRecipe(ResourceKey.create(Registries.RECIPE, id), json.getAsJsonObject(), wrapperLookup);
         map.put(id, recipeEntry.value());
     }
@@ -47,7 +67,7 @@ public class PlusRecipeManager {
         return new RecipeHolder<>(key, Recipe.CODEC.parse(registries.createSerializationContext(JsonOps.INSTANCE), json).getOrThrow(JsonParseException::new));
     }
 
-    private void registerAllRecipes(Map<ResourceLocation, JsonElement> recipeMap) {
+    private void registerAllRecipes(Map<Identifier, JsonElement> recipeMap) {
         shapelessRecipes.forEach(recipe -> recipe.addToRecipeMap(recipeMap));
         shapedRecipes.forEach(recipe -> recipe.addToRecipeMap(recipeMap));
         smeltingRecipes.forEach(recipe -> recipe.addToRecipeMap(recipeMap));

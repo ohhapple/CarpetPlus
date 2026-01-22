@@ -1,3 +1,23 @@
+/*
+ * This file is part of the CarpetPlus project, licensed under the
+ * GNU Lesser General Public License v3.0
+ *
+ * Copyright (C) 2026 ohhapple and contributors
+ *
+ * CarpetPlus is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CarpetPlus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.ohhapple.carpetplus.mycommand;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -9,11 +29,12 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public class ChunkStatsCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("chunkstats")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_MODERATOR))
                 .executes(ctx -> showChunkStats(ctx))
         );
     }
@@ -60,7 +81,7 @@ public class ChunkStatsCommand {
                     String.format("视距: %d", playerDistance)
             ), false);
             ctx.getSource().sendSuccess(() -> Component.literal(
-                    String.format("维度: %s", level.dimension().location())
+                    String.format("维度: %s", level.dimension().identifier())
             ), false);
 
             // 计算区块加载数量（近似值）

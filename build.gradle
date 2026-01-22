@@ -1,129 +1,39 @@
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
-    id 'maven-publish'
+    id("maven-publish")
+    id("com.github.hierynomus.license").version("${hierynomus_license_version}").apply(false)
+    id("net.fabricmc.fabric-loom").version("${fabric_loom_version}").apply(false)
+    id("com.replaymod.preprocess").version("${preprocess_version}")
 }
 
+preprocess {
+    preprocess.strictExtraMappings.set(false)
 
-version = "${property('mod_version')}+${sc.current.version}"
-base.archivesName = property('archives_base_name') as String
-group = project.maven_group
+    def mc260100 = createNode('26.1', 26_01_00, '')
 
-def requiredJava =
-        sc.current.parsed.matches('>=1.20.6') ? JavaVersion.VERSION_21 :
-                sc.current.parsed.matches('>=1.18')   ? JavaVersion.VERSION_17 :
-                        sc.current.parsed.matches('>=1.17')   ? JavaVersion.VERSION_16 :
-                                JavaVersion.VERSION_1_8
-//base {
-//    archivesName = project.archives_base_name
-//}
+    mc260100.link(mc260100, file('versions/mapping-26.1-26.1.txt'))
+}
 
-loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        "carpet_ohhapple_addition" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
+tasks.register('buildAndGather') {
+    subprojects {
+        dependsOn project.tasks.named('build').get()
+    }
+    doFirst {
+        println 'Gathering builds'
+        def buildLibs = {
+            p -> p.buildDir.toPath().resolve('libs')
+        }
+        delete fileTree(buildLibs(rootProject)) {
+            include '*'
+        }
+        subprojects {
+            copy {
+                from(buildLibs(project)) {
+                    include '*.jar'
+                    exclude '*-dev.jar', '*-sources.jar'
+                }
+                into buildLibs(rootProject)
+                duplicatesStrategy DuplicatesStrategy.INCLUDE
+            }
         }
     }
-
-    accessWidenerPath =file("src/main/resources/ohhapple.accesswidener")
-}
-
-fabricApi {
-    configureDataGeneration {
-        client = true
-    }
-}
-
-repositories {
-    // Add repositories to retrieve artifacts from in here.
-    // You should only use this when depending on other mods because
-    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-    // for more information about repositories.
-    maven {
-        url 'https://masa.dy.fi/maven'
-    }
-}
-
-dependencies {
-    // To change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${sc.current.version}"
-//    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${property('loader_version')}"
-//    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-//    modImplementation "net.fabricmc.fabric-api:fabric-api:${property('fabric_version')}"
-//    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "carpet:fabric-carpet:${property('minecraft_version')}-${property('carpet_core_version')}"
-//    modImplementation "carpet:fabric-carpet:${project.minecraft_version}-${project.carpet_core_version}"
-    implementation 'com.google.code.gson:gson:2.10.1'
-}
-
-processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
-    filteringCharset "UTF-8"
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
-    }
-}
-
-def targetJavaVersion = 21
-tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release.set(targetJavaVersion)
-    }
-}
-java {
-    withSourcesJar()
-    sourceCompatibility = requiredJava
-    targetCompatibility = requiredJava
-}
-
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            artifactId = project.archives_base_name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
-    }
-
-
 }

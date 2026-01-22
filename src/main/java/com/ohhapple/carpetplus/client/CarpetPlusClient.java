@@ -18,15 +18,13 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus.settings;
+package com.ohhapple.carpetplus.client;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import net.fabricmc.api.ClientModInitializer;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface RecipeRule {
-    String desc() default "";
+public class CarpetPlusClient implements ClientModInitializer {
+
+    @Override
+    public void onInitializeClient() {
+    }
 }

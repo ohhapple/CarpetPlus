@@ -1,11 +1,32 @@
+/*
+ * This file is part of the CarpetPlus project, licensed under the
+ * GNU Lesser General Public License v3.0
+ *
+ * Copyright (C) 2026 ohhapple and contributors
+ *
+ * CarpetPlus is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * CarpetPlus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.ohhapple.carpetplus.mixin;
 
 import com.ohhapple.carpetplus.settings.CarpetPlusSettings;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge;
-import net.minecraft.world.entity.projectile.windcharge.WindCharge;
+
+import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.AbstractWindCharge;
+import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.SimpleExplosionDamageCalculator;
