@@ -27,6 +27,7 @@ import com.ohhapple.carpetplus.utils.music.song;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +49,9 @@ public class NetEaseMusicFetcher {
             String urlStr = "http://music.163.com/api/search/get/?s=" +
                     encodedSongName + "&type=1&limit=" + limit;
 
-            URL url = new URL(urlStr);
+//            URL url = new URL(urlStr);
+            URI uri = new URI(urlStr);
+            URL url = uri.toURL();
             connection = (HttpURLConnection) url.openConnection();
 
             // 设置请求参数

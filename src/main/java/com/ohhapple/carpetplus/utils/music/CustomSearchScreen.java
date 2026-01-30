@@ -117,12 +117,13 @@ public class CustomSearchScreen extends Screen {
         if (inputText.equals(lastSearchQuery)) {
             return;
         }
+        performSearch(inputText);
 
-        if (currentTime - lastSearchTime > SEARCH_DELAY_MS) {
-            lastSearchTime = currentTime;
-            lastSearchQuery = inputText;
-            performSearch(inputText);
-        }
+//        if (currentTime - lastSearchTime > SEARCH_DELAY_MS) {
+//            lastSearchTime = currentTime;
+//            lastSearchQuery = inputText;
+//            performSearch(inputText);
+//        }
     }
 
     private void performSearch(String query) {
@@ -155,7 +156,7 @@ public class CustomSearchScreen extends Screen {
             return results;
         }
 
-        String lowerQuery = query.toLowerCase().trim();
+//        String lowerQuery = query.toLowerCase().trim();
 
         // 根据关键词生成不同的结果-----------------------------------------------------------------------------------------
 

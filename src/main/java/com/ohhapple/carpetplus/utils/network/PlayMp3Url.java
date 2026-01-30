@@ -27,6 +27,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,7 +75,9 @@ public class PlayMp3Url {
         stop();
 
         try {
-            URL url = new URL(url1);
+//            URL url = new URL(url1);
+            URI uri = new URI(url1);
+            URL url = uri.toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // 设置请求属性

@@ -26,8 +26,6 @@ import com.ohhapple.carpetplus.socket.utils.urlfactory;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.ohhapple.carpetplus.CarpetPlus.MOD_ID;
 
