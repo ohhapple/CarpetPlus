@@ -18,30 +18,26 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.mycommand.chatcommand;
 
-import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import com.mojang.brigadier.CommandDispatcher;
+import com.ohhapple.carpetplus.utils.music.CustomSearchScreen;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permissions;
 
-
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
-
-    @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
+/**
+ * 客户端指令注册，用于打开搜索界面
+ */
+public class MusicSearchGUI {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("open")
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_MODERATOR))
+                .executes(ctx -> open())
+        );
     }
-
-    public static String getModId(){
-        return MOD_ID;
+    private static int open() {
+        CustomSearchScreen.open();
+        return 1;
     }
-    public static String getVersion() {return version;}
-
 }

@@ -18,30 +18,19 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.utils.sendmessage;
 
-import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import com.ohhapple.carpetplus.utils.Layout;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
-
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
-
-    @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
+public class message {
+    public static void sendmessage(CommandSourceStack source,boolean bl , Layout color, String... args) {
+        MutableComponent message = Component.empty();
+        for (String arg : args) {
+            message.append(Component.literal(arg).withStyle(color.getFormatting()));
+        }
+        source.sendSuccess(() -> message, bl);
     }
-
-    public static String getModId(){
-        return MOD_ID;
-    }
-    public static String getVersion() {return version;}
-
 }

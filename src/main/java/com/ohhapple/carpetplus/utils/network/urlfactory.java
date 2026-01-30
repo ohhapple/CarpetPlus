@@ -18,30 +18,23 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.utils.network;
 
-import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+public class urlfactory {
+    public  String fomateUrl(String url) {
 
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
+            // 匹配整个URL中的id参数
+            String regex = "https?://[^/]+/song\\?id=(\\d+)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(url);
+            String id = matcher.find() ? matcher.group(1) : null;
 
-    @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
+        return "http://music.163.com/song/media/outer/url?id="+id+".mp3";
     }
-
-    public static String getModId(){
-        return MOD_ID;
+    public  String idtourl(String id) {
+        return "http://music.163.com/song/media/outer/url?id="+id+".mp3";
     }
-    public static String getVersion() {return version;}
-
 }

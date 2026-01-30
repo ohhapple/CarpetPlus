@@ -37,5 +37,8 @@
   "carpet.rule.EquipmentUnbreak.name": "equipmentDoesNotConsumeDurability",
   "carpet.rule.EquipmentUnbreak.desc": "equipmentDoesNotConsumeDurability",
   "carpet.rule.ShulkerBoxNested.name": "shulkerBoxNesting",
-  "carpet.rule.ShulkerBoxNested.desc": "Choose whether shulker boxes can be placed inside other shulker boxes by players or by hoppers or both"
+  "carpet.rule.ShulkerBoxNested.desc": "Choose whether shulker boxes can be placed inside other shulker boxes by players or by hoppers or both",
+  "carpet.rule.GetClientPlayerFps.name": "获取服务器玩家FPS",
+  "carpet.rule.GetClientPlayerFps.desc": "获取服务器玩家FPS",
+  "custom.search.title": "搜索"
 }

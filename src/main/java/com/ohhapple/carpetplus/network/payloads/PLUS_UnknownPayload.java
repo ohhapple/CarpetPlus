@@ -18,30 +18,33 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.network.payloads;
 
+import com.ohhapple.carpetplus.network.PLUS_CustomPayload;
 import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import com.ohhapple.carpetplus.utils.Noop;
+import net.minecraft.network.FriendlyByteBuf;
 
+import org.apache.logging.log4j.LogManager;
 
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
+public class PLUS_UnknownPayload extends PLUS_CustomPayload {
+    private static final String ID = PLUS_PayloadManager.PacketId.UNKNOWN.getId();
+
+    public PLUS_UnknownPayload() {
+        super(ID);
+    }
 
     @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
+    protected void writeData(FriendlyByteBuf buf) {
+        Noop.noop();
     }
 
-    public static String getModId(){
-        return MOD_ID;
+    @Override
+    public void handle() {
+        LogManager.getLogger().warn("Received unknown custom payload from carpetplus.");
     }
-    public static String getVersion() {return version;}
 
+    public static PLUS_UnknownPayload create() {
+        return new PLUS_UnknownPayload();
+    }
 }

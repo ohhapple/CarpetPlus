@@ -18,30 +18,11 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.settings;
 
-import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-
-
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
-
-    @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
-    }
-
-    public static String getModId(){
-        return MOD_ID;
-    }
-    public static String getVersion() {return version;}
-
+public class PLUSRuleCategory {
+    public static final String OHHAPPLE = "OHHAPPLE";
+    public static final String CRAFTING = "crafting";
+    public static final String PLUS_CHUNKLOADER = "PLUS_chunkload";
+    public static final String PLUS_NETWORK = "PLUS_network";
 }

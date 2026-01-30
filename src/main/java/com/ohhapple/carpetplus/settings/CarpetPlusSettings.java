@@ -28,6 +28,7 @@ import com.ohhapple.carpetplus.observes.recipe.RecipeRuleObserver;
 import net.minecraft.commands.CommandSourceStack;
 
 import static carpet.api.settings.RuleCategory.*;
+import static com.ohhapple.carpetplus.settings.PLUSRuleCategory.PLUS_NETWORK;
 
 /**
  * Here is your example Settings class you can plug to use carpetmod /carpet settings command
@@ -187,5 +188,11 @@ public class CarpetPlusSettings
             categories = {OHHAPPLE, FEATURE}
     )
     public static String ShulkerBoxNested = "false";
+    //--------------------------------------------------------------------------------------
+    @Rule(
+            options = {"0", "1", "2", "3", "4", "ops", "true", "false"},
+            categories = {OHHAPPLE,PLUS_NETWORK, COMMAND}
+    )
+    public static String GetClientPlayerFps = "false";
 
 }

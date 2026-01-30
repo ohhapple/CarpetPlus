@@ -18,30 +18,20 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.mixin.hooks.network;
 
-import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import com.ohhapple.carpetplus.client.CarpetPLUSClient;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
-
-    @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
+@Mixin(ClientPacketListener.class)
+public abstract class ClientPlayNetworkHandlerMixin {
+    @Inject(method = "handleLogin", at = @At("RETURN"))
+    private void onGameJoin(CallbackInfo ci) {
+        CarpetPLUSClient.getInstance().onGameJoin();
     }
-
-    public static String getModId(){
-        return MOD_ID;
-    }
-    public static String getVersion() {return version;}
-
 }

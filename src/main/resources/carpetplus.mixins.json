@@ -13,11 +13,21 @@
     "hooks.recipe.RecipeManagerAccessor",
     "hooks.recipe.RecipeManagerMixin",
     "hooks.server.MinecraftServerMixin",
+    "hooks.server.ServerGamePacketListenerImplMixin",
+    "network.CustomPayloadC2SPacketMixin",
+    "network.CustomPayloadS2CPacketMixin",
+    "network.ServerPlayNetworkHandlerMixin",
     "ohhapple.ChunkMapInvoker",
     "ShulkerBoxNested.BlockItemMixin",
     "ShulkerBoxNested.ShulkerBoxBlockEntityMixin"
   ],
   "client": [
+    "hooks.client.ChatScreenMixin",
+    "hooks.client.MinecraftMixin",
+    "hooks.network.ClientPlayNetworkHandlerMixin",
+    "hooks.network.MinecraftClientMixin",
+    "network.ClientPlayNetworkHandlerMixin",
+    "rule.commandGetClientPlayerFPS.MinecraftInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -15,7 +15,7 @@
   "entrypoints": {
 
     "client": [
-      "com.ohhapple.carpetplus.client.CarpetPlusClient"
+      "com.ohhapple.carpetplus.client.CarpetPLUSClient"
     ],
     "main": [
       "com.ohhapple.carpetplus.CarpetPlus"

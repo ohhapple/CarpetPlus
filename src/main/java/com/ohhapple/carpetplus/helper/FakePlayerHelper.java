@@ -18,30 +18,14 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus;
+package com.ohhapple.carpetplus.helper;
 
-import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.settings.ohhappleinit;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import carpet.patches.EntityPlayerMPFake;
 
+import net.minecraft.world.entity.player.Player;
 
-public class CarpetPlus implements ModInitializer
-{
-    public static final String MOD_ID = "carpetplus";
-    private static String version;
-
-    @Override
-    public void onInitialize()
-    {
-        version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
-        ohhappleinit.open();
-        PLUS_PayloadManager.registerPayloads();
+public class FakePlayerHelper {
+    public static boolean isFakePlayer(Player player) {
+        return player instanceof EntityPlayerMPFake;
     }
-
-    public static String getModId(){
-        return MOD_ID;
-    }
-    public static String getVersion() {return version;}
-
 }

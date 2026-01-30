@@ -29,9 +29,14 @@ import com.ohhapple.carpetplus.CustomRecipes.PlusRecipeManager;
 import com.ohhapple.carpetplus.helper.rule.recipeRule.RecipeRuleHelper;
 import com.ohhapple.carpetplus.mycommand.ChunkStatsCommand;
 import com.ohhapple.carpetplus.mycommand.PlayerChunkCommand;
+import com.ohhapple.carpetplus.mycommand.chatcommand.MusicSearchGUI;
+import com.ohhapple.carpetplus.mycommand.rule.commandGetClientPlayerFps.GetClientPlayerFpsRegistry;
+import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeS2CPayload;
 import com.ohhapple.carpetplus.utils.CarpetPlusTranslations;
 import com.ohhapple.carpetplus.utils.MinecraftServerUtil;
+import com.ohhapple.carpetplus.utils.NetworkUtil;
 import com.ohhapple.carpetplus.utils.PlayerChunkLoader;
+import com.ohhapple.carpetplus.utils.network.PlayMp3Url;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
@@ -42,6 +47,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Map;
 
 import static com.ohhapple.carpetplus.settings.CarpetPlusSettings.playerSpecificChunks;
@@ -99,6 +105,11 @@ public class ohhappleinit implements CarpetExtension {
 //        PingCommand.register(dispatcher);
         PlayerChunkCommand.register(dispatcher);
         ChunkStatsCommand.register(dispatcher);
+        GetClientPlayerFpsRegistry.register(dispatcher);
+        MusicSearchGUI.register(dispatcher);
+    }
+    public void sendS2CPacketOnHandShake(ServerPlayer player) {
+        NetworkUtil.sendS2CPacket(player, HandShakeS2CPayload.create(CarpetPlus.getVersion(), NetworkUtil.getServerSupportState()), NetworkUtil.SendMode.NEED_SUPPORT);
     }
     @Override
     public void onPlayerLoggedIn(ServerPlayer player) {
@@ -116,6 +127,8 @@ public class ohhappleinit implements CarpetExtension {
             globalLoader.onPlayerLeave(player);
             LOGGER.debug("玩家 {} 离开，清理设置", player.getName().getString());
         }
+        NetworkUtil.removeSupportClient(player.getUUID());
+        PlayMp3Url.MUSIC_URL.remove(player.getName().getString());
     }
     @Override
     public void onServerLoaded(MinecraftServer server) {
@@ -123,16 +136,20 @@ public class ohhappleinit implements CarpetExtension {
         minecraftServer = server;
         LOGGER.info("服务器启动，初始化玩家区块加载管理器");
         globalLoader = new PlayerChunkLoader(server);
+//        new Thread(() -> {serversocke.start( server);}).start();
     }
     @Override
     public void onServerClosed(MinecraftServer server) {
         // 服务器关闭时执行
         LOGGER.info("服务器关闭，清理玩家区块加载设置");
         globalLoader = null;
+        NetworkUtil.clearClientSupport();
+//        serversocke.stop();
     }
     @Override
     public void onServerLoadedWorlds(MinecraftServer server) {
         // 所有世界加载完成时执行
+        NetworkUtil.setServerSupport(true);
     }
     @Override
     public Map<String, String> canHasTranslations(String lang)
@@ -148,6 +165,13 @@ public class ohhappleinit implements CarpetExtension {
 
     public void afterServerLoadWorlds(MinecraftServer server) {
         RecipeRuleHelper.reloadServerResources(server);
+    }
+    public static File getServerDir() {
+        // 对于 DedicatedServer
+        if (minecraftServer != null) {
+            return minecraftServer.getServerDirectory().toFile();
+        }
+        return new File("."); // 当前目录
     }
 
 }

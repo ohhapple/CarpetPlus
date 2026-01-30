@@ -18,13 +18,19 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus.client;
+package com.ohhapple.carpetplus.network;
 
-import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 
-public class CarpetPlusClient implements ClientModInitializer {
+public class PLUS_PayloadSender {
+    protected static void s2c(PLUS_CustomPayload payload, ServerPlayer player) {
+        player.connection.send(new ClientboundCustomPayloadPacket(payload));
+    }
 
-    @Override
-    public void onInitializeClient() {
+    protected static void c2s(PLUS_CustomPayload payload, LocalPlayer player) {
+        player.connection.send(new ServerboundCustomPayloadPacket(payload));
     }
 }
