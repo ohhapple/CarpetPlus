@@ -146,6 +146,12 @@ public class CarpetPlusSettings
             categories = {OHHAPPLE, FEATURE}
     )
     public static int StackableTotemOfUndying = 1;
+    //奶桶可堆叠
+    @Rule(
+            options = {"1","16", "64"},
+            categories = {OHHAPPLE, FEATURE}
+    )
+    public static int StackableMilkBucket = 1;
     //装备不可破坏
     @Rule(
             categories = {OHHAPPLE, FEATURE}

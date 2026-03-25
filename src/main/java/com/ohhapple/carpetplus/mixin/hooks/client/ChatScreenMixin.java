@@ -34,13 +34,9 @@ public class ChatScreenMixin {
     @Inject(method = "handleChatInput", at = @At("HEAD"), cancellable = true)
     private void onChatInput(String msg, boolean addToRecent, CallbackInfo ci) {
         if (msg.trim().startsWith("++cp")) {
-            if (msg.trim().startsWith("++cp music")) {
+            if (msg.trim().equals("++cp music")) {
                 MusicSearchScreen.open();
             ci.cancel();
-            }
-
-            if (msg.trim().equals("++cp test")) {
-                ci.cancel();
             }
         }
     }

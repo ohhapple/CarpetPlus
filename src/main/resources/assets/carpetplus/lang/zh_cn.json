@@ -18,6 +18,8 @@
   "carpet.rule.StackableEnchantedBook.desc": "附魔书可堆叠",
   "carpet.rule.StackableTotemOfUndying.name": "不死图腾可堆叠",
   "carpet.rule.StackableTotemOfUndying.desc": "不死图腾可堆叠",
+  "carpet.rule.StackableMilkBucket.name": "奶桶可堆叠",
+  "carpet.rule.StackableMilkBucket.desc": "奶桶可堆叠",
   "carpet.rule.EquipmentUnbreak.name": "装备不消耗耐久",
   "carpet.rule.EquipmentUnbreak.desc": "装备不消耗耐久",
   "carpet.rule.ShulkerBoxNested.name": "潜影盒嵌套",

@@ -6,13 +6,14 @@
 # 相关规则指令
 ~~~
 /carpet SuperWindCharge [boolean default=false] 风弹螺旋丸手里剑
-/carpetVillageAlwaysBreed [boolean default=false] 村民一直繁殖（包括小村民）
+/carpet VillageAlwaysBreed [boolean default=false] 村民一直繁殖（包括小村民）
 /carpet SuperSponge [String default="false"] 超级海绵模式(可使用/carpet SuperSpongeRadius设置半径)
 /carpet SuperSpongeRadius [int default=6] 超级海绵生效半径(需要使用/carpet SuperSponge开启超级海绵模式)
 /carpet concreteBurnedIntoglass [boolean default=false] 16色混凝土粉末烧成16色玻璃
 /carpet StackablePotion [int default=1] 药水可堆叠
 /carpet StackableEnchantedBook [int default=1] 附魔书可堆叠
 /carpet StackableTotemOfUndying [int default=1] 不死图腾可堆叠
+/carpet StackableMilkBucket [int default=1] 奶桶可堆叠
 /carpet EquipmentUnbreak [boolean default=false] 装备不消耗耐久
 /carpet ShulkerBoxNested [String default="false"] 潜影盒嵌套(可选被谁操作:仅玩家,仅漏斗发射器,或者全部)
 /carpet CarpetPlusNetwork [boolean default=true] CarpetPlus网络协议处理总开关,开启后可使用相关网络功能(默认开启)

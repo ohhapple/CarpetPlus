@@ -19,6 +19,8 @@
   "carpet.rule.StackableEnchantedBook.desc": "enchantedBooksAreStackable. 附魔书可堆叠",
   "carpet.rule.StackableTotemOfUndying.name": "theTotemOfImmortalityCanBeStacked",
   "carpet.rule.StackableTotemOfUndying.desc": "theTotemOfImmortalityCanBeStacked. 不死图腾可堆叠",
+  "carpet.rule.StackableMilkBucket.name": "StackableMilkBucket",
+  "carpet.rule.StackableMilkBucket.desc": "Milk buckets can be stacked奶桶可堆叠",
   "carpet.rule.EquipmentUnbreak.name": "equipmentDoesNotConsumeDurability",
   "carpet.rule.EquipmentUnbreak.desc": "equipmentDoesNotConsumeDurability. 装备不消耗耐久",
   "carpet.rule.ShulkerBoxNested.name": "shulkerBoxNesting",

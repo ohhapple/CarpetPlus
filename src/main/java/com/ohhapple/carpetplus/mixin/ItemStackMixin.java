@@ -75,6 +75,13 @@ public abstract class ItemStackMixin implements DataComponentHolder, ItemInstanc
                 return CarpetPlusSettings.StackableTotemOfUndying;
             }
         }
+
+        if (CarpetPlusSettings.StackableMilkBucket!=1) {
+            // 检查是否是奶桶物品
+            if (self.is(Items.MILK_BUCKET)) {
+                return CarpetPlusSettings.StackableMilkBucket;
+            }
+        }
         return this.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
     }
 }
