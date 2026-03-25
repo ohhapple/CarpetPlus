@@ -18,24 +18,22 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus.utils.network;
+package com.ohhapple.carpetplus.utils.music.network;
 
+import com.ohhapple.carpetplus.utils.NetworkUtil;
+import com.ohhapple.carpetplus.utils.music.musiclist;
+import com.ohhapple.carpetplus.utils.sendmessage.message;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 
 import javax.sound.sampled.*;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PlayMp3Url {
-    public static final Map<String, String> MUSIC_URL = new ConcurrentHashMap<>();
     // 音频播放相关对象
     private static SourceDataLine audioLine;
 
@@ -43,6 +41,7 @@ public class PlayMp3Url {
     private static InputStream inputStream;
     private static AudioInputStream audioInputStream;
     private static AudioInputStream decodedStream;
+    private static byte[] buffer;
 
     // 状态控制
     private static final AtomicBoolean isPlaying = new AtomicBoolean(false);
@@ -86,13 +85,20 @@ public class PlayMp3Url {
             connection.setReadTimeout(60000);
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             connection.setRequestProperty("Accept", "audio/mpeg, audio/*");
-            connection.setRequestProperty("Connection", "keep-alive");
+//            connection.setRequestProperty("Connection", "keep-alive");
+            connection.setRequestProperty("Connection", "close");
             connection.setRequestProperty("Accept-Encoding", "identity");
 
             // 检查响应码
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_PARTIAL) {
                 System.err.println("下载失败，HTTP 状态码: " + responseCode);
+                NetworkUtil.executeOnClientThread(()->{message.sendClientMessage("该歌曲无法播放");});
+                // 线程锁计数器减1
+                if (musiclist.countDownLatch!= null&&musiclist.countDownLatch.getCount() > 0)
+                {
+                    musiclist.countDownLatch.countDown();
+                }
                 return;
             }
 
@@ -102,8 +108,18 @@ public class PlayMp3Url {
             System.out.println("加载音频文件 - 大小: " + originalFileSize + " bytes, 类型: " + contentType);
 
             // 获取输入流
-            InputStream is = connection.getInputStream();
-            inputStream = new BufferedInputStream(is, 4194304);
+            try(
+                InputStream is = connection.getInputStream();
+                BufferedInputStream is1= new BufferedInputStream(is, 8192);//4194304
+                DataInputStream dis = new DataInputStream(is1);
+                )
+            {
+                buffer = new byte[(int)originalFileSize];
+                dis.readFully(buffer);
+//            buffer=is1.readAllBytes();
+//            buffer = IOUtils.toByteArray(is1,(int)originalFileSize);
+                inputStream=new ByteArrayInputStream(buffer);
+            }
 
             // 开始播放
             playMP3Stream(inputStream);
@@ -133,7 +149,7 @@ public class PlayMp3Url {
         try {
             // 使用MP3SPI读取MP3文件
             MpegAudioFileReader reader = new MpegAudioFileReader();
-            audioInputStream = reader.getAudioInputStream(new BufferedInputStream(inputStream, 4194304));
+            audioInputStream = reader.getAudioInputStream(new BufferedInputStream(inputStream, 8192));
 
             // 获取MP3格式
             AudioFormat mp3Format = audioInputStream.getFormat();
@@ -350,6 +366,11 @@ public class PlayMp3Url {
                     // 清理资源
                     cleanupPlayback();
                     threadCompleted = true;
+                    // 线程锁计数器减1
+                    if (musiclist.countDownLatch!= null&&musiclist.countDownLatch.getCount() > 0)
+                    {
+                    musiclist.countDownLatch.countDown();
+                    }
                 }
             }, "AudioPlaybackThread");
 
@@ -390,6 +411,7 @@ public class PlayMp3Url {
             }
 
             closeStreams();
+            buffer = null;
 
             isPlaying.set(false);
             isPaused.set(false);

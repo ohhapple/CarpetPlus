@@ -45,8 +45,8 @@ public class GetClientPlayerFpsRegistry {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-                Commands.literal("getClientPlayerFps")
-                        .requires(source -> CommandHelper.canUseCommand(source, CarpetPlusSettings.GetClientPlayerFps))
+                Commands.literal("getPlayerFps")
+                        .requires(source -> CommandHelper.canUseCommand(source, CarpetPlusSettings.GetPlayerFps))
                         .then(Commands.argument("player", EntityArgument.player())
                                 .executes(ctx -> requestFps(EntityArgument.getPlayer(ctx, "player"), ctx.getSource())))
                         .then(Commands.literal("help")
@@ -73,7 +73,7 @@ public class GetClientPlayerFpsRegistry {
 
     private static int help(CommandSourceStack source) {
 //        Messenger.tell(source, Messenger.f(tr.tr("help"), Layout.GRAY));
-        message.sendmessage(source,false,Layout.GRAY,"/getClientPlayerFps player 获取玩家FPS");
+        message.sendmessage(source,false,Layout.GRAY,"/getPlayerFps player 获取玩家FPS");
         return 1;
     }
 }

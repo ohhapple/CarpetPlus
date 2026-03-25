@@ -23,6 +23,7 @@ package com.ohhapple.carpetplus.mixin.network;
 
 import com.ohhapple.carpetplus.network.PLUS_CustomPayload;
 import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
+import com.ohhapple.carpetplus.settings.CarpetPlusSettings;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
@@ -35,6 +36,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ServerPlayNetworkHandlerMixin {
     @Inject(method = "handleCustomPayload", at = @At("HEAD"), cancellable = true)
     private void onCustomPayload(ServerboundCustomPayloadPacket packet, CallbackInfo ci) {
+        if (!CarpetPlusSettings.CarpetPlusNetwork) {
+            return;
+        }
         if (
                 packet.payload() instanceof PLUS_CustomPayload payload &&
                         packet.payload().type().id().equals(PLUS_CustomPayload.CHANNEL_ID) &&

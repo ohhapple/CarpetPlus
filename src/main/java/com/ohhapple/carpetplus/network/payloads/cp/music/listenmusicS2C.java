@@ -22,7 +22,7 @@ package com.ohhapple.carpetplus.network.payloads.cp.music;
 
 import com.ohhapple.carpetplus.network.PLUS_CustomPayload;
 import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
-import com.ohhapple.carpetplus.utils.network.PlayMp3Url;
+import com.ohhapple.carpetplus.utils.music.network.PlayMp3Url;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class listenmusicS2C extends PLUS_CustomPayload {

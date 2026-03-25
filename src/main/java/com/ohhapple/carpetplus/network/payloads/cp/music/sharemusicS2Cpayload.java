@@ -23,20 +23,23 @@ package com.ohhapple.carpetplus.network.payloads.cp.music;
 import com.ohhapple.carpetplus.network.PLUS_CustomPayload;
 import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
 import com.ohhapple.carpetplus.utils.NetworkUtil;
+import com.ohhapple.carpetplus.utils.music.MusicSearchScreen;
+import com.ohhapple.carpetplus.utils.music.musiclist;
 import com.ohhapple.carpetplus.utils.music.song;
+import com.ohhapple.carpetplus.utils.sendmessage.message;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class sharemusicC2Spayload extends PLUS_CustomPayload {
-    private static final String ID = PLUS_PayloadManager.PacketId.CP_SHARE_MUSIC_C2S.getId();
+public class sharemusicS2Cpayload extends PLUS_CustomPayload {
+    private static final String ID = PLUS_PayloadManager.PacketId.CP_SHARE_MUSIC_S2C.getId();
     private final String name;
     private final song song;
-    public sharemusicC2Spayload(String name,song song) {
+    public sharemusicS2Cpayload(String name,song song) {
         super(ID);
         this.name = name;
         this.song = song;
     }
 
-    public sharemusicC2Spayload(FriendlyByteBuf buf) {
+    public sharemusicS2Cpayload(FriendlyByteBuf buf) {
         super(ID);
         this.name = buf.readUtf();
         song s = new song();
@@ -63,12 +66,18 @@ public class sharemusicC2Spayload extends PLUS_CustomPayload {
 
     @Override
     public void handle() {
-        NetworkUtil.executeOnServerThread(() ->{
-            NetworkUtil.broadcastDataPack(sharemusicS2Cpayload.create(name,song),NetworkUtil.SendMode.NEED_SUPPORT);
+        NetworkUtil.executeOnClientThread(() ->{
+            if (MusicSearchScreen.inserverchannel){
+                if (!musiclist.containsKey(name+" share: "+song.getShortDescription())&&!musiclist.containsKey(song.getShortDescription())){
+                    musiclist.put(name+" share: "+song.getShortDescription(),song);
+                    message.sendClientMessage(name+" share: "+song.getShortDescription());
+                    if (musiclist.entrySet().size()==1&&(musiclist.countDownLatch==null||musiclist.countDownLatch.getCount() == 0)){musiclist.playalways();}
+                }
+            }
         });
     }
 
-    public static sharemusicC2Spayload create(String name, song song) {
-        return new sharemusicC2Spayload(name,song);
+    public static sharemusicS2Cpayload create(String name, song song) {
+        return new sharemusicS2Cpayload(name,song);
     }
 }

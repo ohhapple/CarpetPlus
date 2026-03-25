@@ -1,29 +1,14 @@
 {
   "carpet.category.ohhapple": "ohhapple",
-  
-
 
   "carpet.rule.SuperWindCharge.name": "风弹螺旋丸手里剑",
   "carpet.rule.SuperWindCharge.desc": "风弹螺旋丸手里剑",
   "carpet.rule.VillageAlwaysBreed.name": "村民一直繁殖",
   "carpet.rule.VillageAlwaysBreed.desc": "村民一直繁殖",
-  "carpet.rule.NuclearTNT.name": "核弹",
-  "carpet.rule.NuclearTNT.desc": "核弹",
-  "carpet.rule.TNTPower.name": "核弹爆炸强度(需开启核弹)",
-  "carpet.rule.TNTPower.desc": "核弹爆炸强度(设置太大当心崩溃)",
   "carpet.rule.SuperSponge.name": "超级海绵模式",
   "carpet.rule.SuperSponge.desc": "超级海绵模式(可使用/carpet SuperSpongeRadius设置半径)",
   "carpet.rule.SuperSpongeRadius.name": "超级海绵生效半径(需开启超级海绵)",
   "carpet.rule.SuperSpongeRadius.desc": "超级海绵生效半径(需要使用/carpet SuperSponge开启超级海绵模式)",
-  "carpet.rule.TNTBreakFluid.name": "TNT可破坏流体",
-  "carpet.rule.TNTBreakFluid.desc": "TNT可破坏流体",
-
-  "carpet.rule.playerSpecificChunks.name": "启用玩家独立视距范围",
-  "carpet.rule.playerSpecificChunks.desc": "启用玩家独立视距范围",
-  "carpet.rule.playerChunkLoadRanges.name": "玩家视距范围设置",
-  "carpet.rule.playerChunkLoadRanges.desc": "请使用/playerchunk逐个设置",
-  "carpet.rule.defaultPlayerViewDistance.name": "默认玩家视距范围",
-  "carpet.rule.defaultPlayerViewDistance.desc": "开启玩家独立视距范围后的默认范围",
 
   "carpet.rule.concreteBurnedIntoglass.name": "混凝土粉末烧玻璃",
   "carpet.rule.concreteBurnedIntoglass.desc": "混凝土粉末烧玻璃",
@@ -37,7 +22,10 @@
   "carpet.rule.EquipmentUnbreak.desc": "装备不消耗耐久",
   "carpet.rule.ShulkerBoxNested.name": "潜影盒嵌套",
   "carpet.rule.ShulkerBoxNested.desc": "可选被谁操作:仅玩家,仅漏斗发射器,或者全部",
-  "carpet.rule.GetClientPlayerFps.name": "获取服务器玩家FPS",
-  "carpet.rule.GetClientPlayerFps.desc": "获取服务器玩家FPS",
-  "custom.search.title": "搜索"
+  "carpet.rule.CarpetPlusNetwork.name": "CarpetPlus网络协议处理总开关",
+  "carpet.rule.CarpetPlusNetwork.desc": "开启后可使用CarpetPlus相关网络协议处理功能",
+  "carpet.rule.GetPlayerFps.name": "获取服务器玩家FPS",
+  "carpet.rule.GetPlayerFps.desc": "获取服务器玩家FPS",
+  "carpet.rule.AmethystShardMusicChannel.name": "紫水晶碎片音乐频道",
+  "carpet.rule.AmethystShardMusicChannel.desc": "紫水晶碎片音乐频道"
 }

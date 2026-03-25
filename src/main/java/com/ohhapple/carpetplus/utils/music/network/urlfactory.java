@@ -18,7 +18,7 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus.utils.network;
+package com.ohhapple.carpetplus.utils.music.network;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

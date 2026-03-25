@@ -39,12 +39,14 @@ public class CarpetPlusSettings
         VANILLA,
         BEHIND,
         LENIENT,
-        EXTENDED;
+        EXTENDED,
+
+        CLIENT;
     }
 
     public static final String OHHAPPLE = "ohhapple";
 
-    public static class validatorScaffoldingDistance extends Validator<Integer> {
+    public static class validate0_7 extends Validator<Integer> {
         @Override
         public Integer validate(CommandSourceStack source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
             return newValue >= 0 && newValue <= 7 ? newValue : null;
@@ -54,7 +56,7 @@ public class CarpetPlusSettings
         public String description() { return "You must choose a value from 0 to 7";}
     }
 
-    public static class ValidateSpiderJokeyDropChance extends Validator<Integer>
+    public static class Validate0_100 extends Validator<Integer>
     {
         @Override
         public Integer validate(CommandSourceStack source, CarpetRule<Integer> currentRule, Integer newValue, String string)
@@ -74,7 +76,7 @@ public class CarpetPlusSettings
         }
 
         @Override
-        public String description() { return "You must choose a value from 0 to 100";}
+        public String description() { return "You must choose a value from 1 to 1000";}
     }
 
     // 验证器类
@@ -95,34 +97,24 @@ public class CarpetPlusSettings
 
 
     //--------------------------------------------------------------------------------------
+    //风弹螺旋丸手里剑
     @Rule(
             categories = {OHHAPPLE, FEATURE}
     )
     public static boolean SuperWindCharge = false;
+    //村民一直繁殖
     @Rule(
             categories = {OHHAPPLE, FEATURE}
     )
     public static boolean VillageAlwaysBreed = false;
-
-
     //--------------------------------------------------------------------------------------
-//    @Rule(
-//            categories = {OHHAPPLE, FEATURE}
-//    )
-//    public static boolean NuclearTNT = false;
-//    @Rule(
-//            options = {"0","4", "10", "20","100"},
-//            strict = false,
-//            categories = {OHHAPPLE, FEATURE},
-//            validators = Validators.NonNegativeNumber.class
-//    )
-//    public static int TNTPower = 4;
-    //--------------------------------------------------------------------------------------
+    //超级海绵
     @Rule(
             options = {"false","water", "lava", "both"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static String SuperSponge = "false";
+    //超级海绵半径
     @Rule(
             options = {"0","6", "10", "20","100"},
             strict = false,
@@ -130,28 +122,6 @@ public class CarpetPlusSettings
             validators = Validators.NonNegativeNumber.class
     )
     public static int SuperSpongeRadius = 6;
-    //--------------------------------------------------------------------------------------
-//    @Rule(
-//            categories = {OHHAPPLE, FEATURE}
-//    )
-//    public static boolean TNTBreakFluid = false;
-    //--------------------------------------------------------------------------------------
-    //启用玩家独立视距范围
-    @Rule(
-            categories = {OHHAPPLE, FEATURE}
-    )
-    public static boolean playerSpecificChunks = false;
-    //玩家视距范围设置
-//    @Rule(
-//            categories = {OHHAPPLE, FEATURE}
-//    )
-    public static String playerChunkLoadRanges = "";
-    //默认玩家视距范围
-//    @Rule(
-//            categories = {OHHAPPLE, FEATURE},
-//            validators = ViewDistanceValidator.class
-//    )
-    public static int defaultPlayerViewDistance = 10;
     //--------------------------------------------------------------------------------------
     //混凝土粉末烧玻璃
     @RecipeRule
@@ -189,10 +159,23 @@ public class CarpetPlusSettings
     )
     public static String ShulkerBoxNested = "false";
     //--------------------------------------------------------------------------------------
+    //CarpetPlus网络协议处理总开关
+    @Rule(
+            categories = {OHHAPPLE, PLUS_NETWORK}
+    )
+    public static boolean CarpetPlusNetwork = true;
+    //--------------------------------------------------------------------------------------
+    //获取客户端玩家FPS
     @Rule(
             options = {"0", "1", "2", "3", "4", "ops", "true", "false"},
             categories = {OHHAPPLE,PLUS_NETWORK, COMMAND}
     )
-    public static String GetClientPlayerFps = "false";
+    public static String GetPlayerFps = "false";
+    //--------------------------------------------------------------------------------------
+    //紫水晶碎片打开音乐频道GUI
+    @Rule(
+            categories = {OHHAPPLE, CLIENT}
+    )
+    public static boolean AmethystShardMusicChannel = false;
 
 }

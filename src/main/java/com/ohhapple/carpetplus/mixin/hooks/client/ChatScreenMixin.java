@@ -20,7 +20,7 @@
 
 package com.ohhapple.carpetplus.mixin.hooks.client;
 
-import com.ohhapple.carpetplus.mycommand.chatcommand.cpcommand;
+import com.ohhapple.carpetplus.utils.music.MusicSearchScreen;
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,32 +34,14 @@ public class ChatScreenMixin {
     @Inject(method = "handleChatInput", at = @At("HEAD"), cancellable = true)
     private void onChatInput(String msg, boolean addToRecent, CallbackInfo ci) {
         if (msg.trim().startsWith("++cp")) {
-//            if (msg.trim().startsWith("++cp music share")) {
-//                command.sharemusic(msg);
-//                ci.cancel();
-//            }
-//            if (msg.trim().startsWith("++cp music stop")) {
-//                command.stopmusic();
-//                ci.cancel();
-//            }
-//            if (msg.trim().startsWith("++cp music get")) {
-//                command.listmusic(msg);
-//                ci.cancel();
-//            }
-            if (msg.trim().startsWith("++cp music share")) {
-            cpcommand.cpsharemusic(msg);
+            if (msg.trim().startsWith("++cp music")) {
+                MusicSearchScreen.open();
             ci.cancel();
             }
-            if (msg.trim().startsWith("++cp music stop")) {
-            cpcommand.stopmusic();
-            ci.cancel();
-            }
-            if (msg.trim().startsWith("++cp music play")) {
-                cpcommand.cpplaymusic( msg);
+
+            if (msg.trim().equals("++cp test")) {
                 ci.cancel();
             }
-
         }
-
     }
 }

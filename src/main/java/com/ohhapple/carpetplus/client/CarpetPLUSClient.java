@@ -25,7 +25,8 @@ import com.ohhapple.carpetplus.network.payloads.cp.modlist.sendmodlistC2S;
 import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeC2SPayload;
 import com.ohhapple.carpetplus.utils.MinecraftClientUtil;
 import com.ohhapple.carpetplus.utils.NetworkUtil;
-import com.ohhapple.carpetplus.utils.network.PlayMp3Url;
+import com.ohhapple.carpetplus.utils.music.SongManager;
+import com.ohhapple.carpetplus.utils.music.network.PlayMp3Url;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -52,6 +53,7 @@ public class CarpetPLUSClient implements ClientModInitializer {
         version = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata().getVersion().getFriendlyString();
         minecraftClient = Minecraft.getInstance();
         PLUS_PayloadManager.registerPayloads();
+        SongManager.initialize();
     }
 
     public static CarpetPLUSClient getInstance() {
@@ -73,15 +75,11 @@ public class CarpetPLUSClient implements ClientModInitializer {
                 .map(modContainer -> modContainer.getMetadata().getId())
                 .filter(id -> !id.equals("minecraft") && !id.contains("fabric-"))
                 .collect(Collectors.toList()))), NetworkUtil.SendMode.FORCE);
-//        new Thread(() -> {clientsocketlogin.start(player,minecraftClient);}).start();
-//        new Thread(() -> {clientsocketsendmod.start(player,minecraftClient);}).start();
     }
 
     public void onDisconnect() {
         NetworkUtil.setServerSupport(false);
         PlayMp3Url.stop();
-//        playmp3url.stop();
-//        CarpetPLUSLazySettings.RULES.clear();
     }
 
     public void onTick() {

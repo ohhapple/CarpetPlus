@@ -24,6 +24,8 @@ import com.ohhapple.carpetplus.network.payloads.PLUS_UnknownPayload;
 import com.ohhapple.carpetplus.network.payloads.cp.modlist.sendmodlistC2S;
 import com.ohhapple.carpetplus.network.payloads.cp.music.listenmusicS2C;
 import com.ohhapple.carpetplus.network.payloads.cp.music.sharemusicC2Spayload;
+import com.ohhapple.carpetplus.network.payloads.cp.music.sharemusicS2Cpayload;
+import com.ohhapple.carpetplus.network.payloads.cp.music.sharemusiclistC2Spayload;
 import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeC2SPayload;
 import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeS2CPayload;
 import com.ohhapple.carpetplus.network.payloads.rule.commandGetClientPlayerFPS.ClientPlayerFpsPayload_C2S;
@@ -43,20 +45,19 @@ public class PLUS_PayloadManager {
 
     public enum PacketId {
         UNKNOWN("unknown"),
-        HANDSHAKE_C2S("handshake_c2s"),
-        HANDSHAKE_S2C("handshake_s2c"),
-        REQUEST_CLIENT_MOD_VERSION_S2C("request_client_mod_version_s2c"),
-        REQUEST_CLIENT_MOD_VERSION_C2S("request_client_mod_version_c2s"),
-        REQUEST_HANDSHAKE_S2C("request_handshake_s2c"),
-        SYNC_CUSTOM_BLOCK_HARDNESS("sync_custom_block_hardness"),
-        CLIENT_PLAYER_FPS_C2S("client_player_fps_c2s"),
-        CLIENT_PLAYER_FPS_S2C("client_player_fps_s2c"),
-        UPDATE_PLAYER_POSE_S2C("update_player_pose_s2c"),
-        LAZY_SETTINGS_S2C("lazy_settings_s2c"),
 
+        //c2s
+        HANDSHAKE_C2S("handshake_c2s"),
+        CLIENT_PLAYER_FPS_C2S("client_player_fps_c2s"),
         CP_SHARE_MUSIC_C2S("cp_share_music_c2s"),
         CP_MODLIST_C2S("cp_modlist_c2s"),
-        CP_LISTEN_MUSIC_S2C("cp_listen_music_s2c");
+        CP_SHARE_MUSIC_LIST_C2S("share_music_list_c2s"),
+
+        //s2c
+        HANDSHAKE_S2C("handshake_s2c"),
+        CLIENT_PLAYER_FPS_S2C("client_player_fps_s2c"),
+        CP_LISTEN_MUSIC_S2C("cp_listen_music_s2c"),
+        CP_SHARE_MUSIC_S2C("cp_share_music_s2c");
 
         private final String id;
 
@@ -76,13 +77,15 @@ public class PLUS_PayloadManager {
         // C2S
         registerPayload(PacketId.HANDSHAKE_C2S.getId(), HandShakeC2SPayload::new);
         registerPayload(PacketId.CLIENT_PLAYER_FPS_C2S.getId(), ClientPlayerFpsPayload_C2S::new);
-        registerPayload(PacketId.CP_SHARE_MUSIC_C2S.getId(), sharemusicC2Spayload::new);
+        registerPayload(PacketId.CP_SHARE_MUSIC_LIST_C2S.getId(), sharemusiclistC2Spayload::new);
         registerPayload(PacketId.CP_MODLIST_C2S.getId(), sendmodlistC2S::new);
+        registerPayload(PacketId.CP_SHARE_MUSIC_C2S.getId(), sharemusicC2Spayload::new);
 
         // S2C
         registerPayload(PacketId.HANDSHAKE_S2C.getId(), HandShakeS2CPayload::new);
         registerPayload(PacketId.CLIENT_PLAYER_FPS_S2C.getId(), ClientPlayerFpsPayload_S2C::new);
         registerPayload(PacketId.CP_LISTEN_MUSIC_S2C.getId(), listenmusicS2C::new);
+        registerPayload(PacketId.CP_SHARE_MUSIC_S2C.getId(), sharemusicS2Cpayload::new);
 
 
         // Both
@@ -97,8 +100,9 @@ public class PLUS_PayloadManager {
         chain.put(HandShakeC2SPayload.class, HandShakeC2SPayload::handle);
         chain.put(PLUS_UnknownPayload.class, PLUS_UnknownPayload::handle);
         chain.put(ClientPlayerFpsPayload_C2S.class, ClientPlayerFpsPayload_C2S::handle);
-        chain.put(sharemusicC2Spayload.class, sharemusicC2Spayload::handle);
+        chain.put(sharemusiclistC2Spayload.class, sharemusiclistC2Spayload::handle);
         chain.put(sendmodlistC2S.class, sendmodlistC2S::handle);
+        chain.put(sharemusicC2Spayload.class, sharemusicC2Spayload::handle);
     }
 
     // S2C
@@ -107,6 +111,7 @@ public class PLUS_PayloadManager {
         chain.put(PLUS_UnknownPayload.class, PLUS_UnknownPayload::handle);
         chain.put(ClientPlayerFpsPayload_S2C.class, ClientPlayerFpsPayload_S2C::handle);
         chain.put(listenmusicS2C.class, listenmusicS2C::handle);
+        chain.put(sharemusicS2Cpayload.class, sharemusicS2Cpayload::handle);
     }
 
     private static void registerPayload(String packetId, Function<FriendlyByteBuf, PLUS_CustomPayload> constructor) {

@@ -18,7 +18,7 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus.utils.network;
+package com.ohhapple.carpetplus.utils.music.network;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
@@ -39,7 +39,7 @@ public class NetEaseMusicFetcher {
     private static final Gson GSON = new GsonBuilder().create();
 
     // 发送HTTP请求获取JSON数据，支持自定义limit
-    public static String fetchMusicData(String songName, int limit) {
+    public static String fetchMusicData(String songName,int offset, int limit) {
         StringBuilder result = new StringBuilder();
         HttpURLConnection connection = null;
 
@@ -47,7 +47,7 @@ public class NetEaseMusicFetcher {
             // 构建URL（URL编码处理中文）
             String encodedSongName = URLEncoder.encode(songName, "UTF-8");
             String urlStr = "http://music.163.com/api/search/get/?s=" +
-                    encodedSongName + "&type=1&limit=" + limit;
+                    encodedSongName + "&type=1&offset="+offset+"&limit=" + limit;
 
 //            URL url = new URL(urlStr);
             URI uri = new URI(urlStr);
@@ -91,10 +91,7 @@ public class NetEaseMusicFetcher {
         return result.toString();
     }
 
-    // 重载方法，默认limit为1
-    public static String fetchMusicData(String songName) {
-        return fetchMusicData(songName, 1);
-    }
+
 
     /**
      * 使用GSON解析JSON并返回歌曲列表
@@ -146,7 +143,6 @@ public class NetEaseMusicFetcher {
             }
         } catch (Exception e) {
             System.err.println("GSON解析失败: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return result;
@@ -163,7 +159,7 @@ public class NetEaseMusicFetcher {
 
     //方法重载，默认limit为1
     public static List<song> searchSongs(String songName) {
-        String jsonResponse = fetchMusicData(songName);
+        String jsonResponse = fetchMusicData(songName,1,1);
         return parseSongsWithGson(jsonResponse);
     }
 
@@ -173,8 +169,8 @@ public class NetEaseMusicFetcher {
      * @param limit 返回数量
      * @return 歌曲列表
      */
-    public static List<song> searchSongs(String songName, int limit) {
-        String jsonResponse = fetchMusicData(songName, limit);
+    public static List<song> searchSongs(String songName,int offset, int limit) {
+        String jsonResponse = fetchMusicData(songName, offset, limit);
         return parseSongsWithGson(jsonResponse);
     }
 

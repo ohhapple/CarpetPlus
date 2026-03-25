@@ -24,5 +24,5 @@ public class PLUSRuleCategory {
     public static final String OHHAPPLE = "OHHAPPLE";
     public static final String CRAFTING = "crafting";
     public static final String PLUS_CHUNKLOADER = "PLUS_chunkload";
-    public static final String PLUS_NETWORK = "PLUS_network";
+    public static final String PLUS_NETWORK = "plus_network";
 }

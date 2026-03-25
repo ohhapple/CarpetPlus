@@ -20,7 +20,6 @@
 
 package com.ohhapple.carpetplus.mixin.hooks.server;
 
-import com.ohhapple.carpetplus.mycommand.chatcommand.cpcommand;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,13 +34,13 @@ public class ServerGamePacketListenerImplMixin {
             cancellable = true
     )
     private void onTryHandleChat(String message, boolean isCommand, Runnable chatHandler, CallbackInfo ci) {
-        if (!isCommand) {  // 只处理普通聊天，不处理命令
-            if (message.trim().startsWith("++cp")) {
-                if (message.trim().startsWith("++cp music get")) {
-                    cpcommand.cpgetmusic(message);
-                    ci.cancel();
-                }
-            }
-        }
+//        if (!isCommand) {  // 只处理普通聊天，不处理命令
+//            if (message.trim().startsWith("++cp")) {
+//                if (message.trim().startsWith("++cp music get")) {
+//                    cpcommand.cpgetmusic(message);
+//                    ci.cancel();
+//                }
+//            }
+//        }
     }
 }

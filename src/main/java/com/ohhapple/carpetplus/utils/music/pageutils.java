@@ -18,15 +18,23 @@
  * along with CarpetPlus. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ohhapple.carpetplus.mixin.ohhapple;
+package com.ohhapple.carpetplus.utils.music;
 
-import net.minecraft.server.level.ChunkMap;
-import net.minecraft.server.level.ServerPlayer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import java.util.ArrayList;
+import java.util.List;
 
-@Mixin(ChunkMap.class)
-public interface ChunkMapInvoker {
-    @Invoker("updateChunkTracking")
-    void invokeUpdateChunkTracking(final ServerPlayer player);
+public class pageutils {
+    public static <T> List<List<T>> splitListByPage(List<T> originalList, int pageSize) {
+        List<List<T>> result = new ArrayList<>();
+
+        for (int i = 0; i < originalList.size(); i += pageSize) {
+            // 计算当前页的结束位置
+            int end = Math.min(originalList.size(), i + pageSize);
+            // 截取当前页的数据
+            List<T> page = originalList.subList(i, end);
+            result.add(new ArrayList<>(page)); // 创建新列表避免引用问题
+        }
+
+        return result;
+    }
 }

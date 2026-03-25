@@ -23,15 +23,72 @@ package com.ohhapple.carpetplus.mixin.hooks.network;
 import com.ohhapple.carpetplus.client.CarpetPLUSClient;
 import net.minecraft.client.Minecraft;
 
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
+import org.jspecify.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftClientMixin {
-    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At("HEAD"))
-    private void onDisconnect(CallbackInfo ci) {
-        CarpetPLUSClient.getInstance().onDisconnect();
+    @Shadow
+    @Nullable
+    public ClientLevel level;
+
+//    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At("HEAD"))
+//    private void onDisconnect(CallbackInfo ci) {
+//        if (this.level!= null){
+//            CarpetPLUSClient.getInstance().onDisconnect();
+//        }
+//    }
+
+//    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At("TAIL"))
+//    private void onDisconnect(CallbackInfo ci) {
+//        if (this.level!= null){
+//            CarpetPLUSClient.getInstance().onDisconnect();
+//        }
+//    }
+
+    @Inject(
+            method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V",
+            at = @At(
+                    value = "FIELD",
+                    target = "Lnet/minecraft/client/Minecraft;level:Lnet/minecraft/client/multiplayer/ClientLevel;",
+                    opcode = Opcodes.PUTFIELD,
+                    shift = At.Shift.BEFORE
+            )
+    )
+    private void onLevelBeingSetToNull(Screen screen, boolean keepResourcePacks, boolean stopSound, CallbackInfo ci) {
+        Minecraft mc = (Minecraft)(Object)this;
+        if (mc.level != null) {
+            CarpetPLUSClient.getInstance().onDisconnect();
+//            System.out.println(GuiWindows.getWindows());
+//            GuiWindows.shutdown();
+//            Thread a = new Thread(() -> {
+//                GuiWindows.closeAllwindows();
+//            });
+//            a.start();
+//            try {
+//                a.join();
+//            } catch (InterruptedException e) {}
+        }
     }
+
+//    @Inject(at = @At("HEAD"), method = "updateLevelInEngines(Lnet/minecraft/client/multiplayer/ClientLevel;Z)V")
+//    private void onUpdateLevelInEngines(ClientLevel level, boolean stopSound, CallbackInfo ci) {
+//        Minecraft mc = (Minecraft)(Object)this;
+//        if (mc.level == null && level == null) {
+//            Thread a = new Thread(() -> {
+//                GuiWindows.closeAllwindows();
+//            });
+//            a.start();
+//            try {
+//                a.join();
+//            } catch (InterruptedException e) {}
+//        }
+//    }
 }

@@ -21,6 +21,7 @@
 package com.ohhapple.carpetplus.utils.sendmessage;
 
 import com.ohhapple.carpetplus.utils.Layout;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -32,5 +33,19 @@ public class message {
             message.append(Component.literal(arg).withStyle(color.getFormatting()));
         }
         source.sendSuccess(() -> message, bl);
+    }
+    public static void sendClientMessage(String message) {
+        if (Minecraft.getInstance().player != null) {
+            Minecraft.getInstance().player.sendSystemMessage(
+                    Component.literal(message)
+            );
+        }
+    }
+    public static void sendClientColoredMessage(Layout color,String message) {
+        if (Minecraft.getInstance().player != null) {
+            Minecraft.getInstance().player.sendSystemMessage(
+                    Component.literal(message).withStyle(color.getFormatting())
+            );
+        }
     }
 }

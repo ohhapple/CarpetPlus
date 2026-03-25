@@ -4,7 +4,7 @@
   "package": "com.ohhapple.carpetplus.mixin",
   "compatibilityLevel": "/*JAVA_VERSION*/",
   "mixins": [
-    "ChunkMapMixin",
+    "ItemMixin",
     "ItemStackMixin",
     "SpongeBlockmixin",
     "Villagermixin",
@@ -17,7 +17,6 @@
     "network.CustomPayloadC2SPacketMixin",
     "network.CustomPayloadS2CPacketMixin",
     "network.ServerPlayNetworkHandlerMixin",
-    "ohhapple.ChunkMapInvoker",
     "ShulkerBoxNested.BlockItemMixin",
     "ShulkerBoxNested.ShulkerBoxBlockEntityMixin"
   ],

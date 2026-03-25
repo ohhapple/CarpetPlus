@@ -46,6 +46,15 @@ dependencies {
     include(implementation('com.googlecode.soundlibs:jlayer:1.0.1.4'))
     implementation 'com.googlecode.soundlibs:tritonus-share:0.3.7.4'
     include 'com.googlecode.soundlibs:tritonus-share:0.3.7.4'
+
+//    implementation "org.lwjgl:lwjgl-freetype:3.3.3"
+//    include "org.lwjgl:lwjgl-freetype:3.3.3"
+//    implementation "org.lwjgl:lwjgl-freetype::natives-windows"
+//    modImplementation "org.lwjgl:lwjgl-freetype"
+//    include "org.lwjgl:lwjgl-freetype"
+
+//    implementation "org.lwjgl:lwjgl-vulkan:3.3.3"
+
 }
 
 loom {
