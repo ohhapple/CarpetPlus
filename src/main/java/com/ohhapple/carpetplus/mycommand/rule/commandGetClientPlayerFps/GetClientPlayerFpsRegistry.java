@@ -65,14 +65,12 @@ public class GetClientPlayerFpsRegistry {
         if (source != null) {
             ServerPlayer player = PlayerUtil.getServerPlayerEntity(playerUuid);
             if (!FakePlayerHelper.isFakePlayer(player) && player != null) {
-//                Messenger.tell(source, Messenger.f(tr.tr("feedback", PlayerUtil.getName(player), String.valueOf(fps)), Layout.GREEN));
                 message.sendmessage(source,false,Layout.GREEN,PlayerUtil.getName(player)," FPS: ",String.valueOf(fps));
             }
         }
     }
 
     private static int help(CommandSourceStack source) {
-//        Messenger.tell(source, Messenger.f(tr.tr("help"), Layout.GRAY));
         message.sendmessage(source,false,Layout.GRAY,"/getPlayerFps player 获取玩家FPS");
         return 1;
     }

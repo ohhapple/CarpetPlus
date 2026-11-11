@@ -20,25 +20,27 @@
 
 package com.ohhapple.carpetplus.utils.music;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.util.Arrays;
-import java.util.List;
-
 public class song {
+    public String source;
     public String id;
     public String name;
+    public String translatedName;
     public String artists;  // 用|分隔
     public String album;    // 专辑字段
     public String duration; // 时长字段（毫秒）
     public String status;   // 状态字段
     public String url;
+    public String coverUrl;
+    public int fee;
+    public boolean vip;
+    public boolean paid;
+    public boolean freeTrial;
+    public boolean privateCloud;
+    public boolean dirty;
+    public boolean playable = true;
 
-    // 空构造函数
     public song() {}
 
-    // 带参数的构造函数
     public song(String id, String name, String artists, String album, String duration, String status) {
         this.id = id;
         this.name = name;
@@ -48,19 +50,6 @@ public class song {
         this.status = status;
     }
 
-    /**
-     * 获取艺术家列表
-     */
-    public List<String> getArtistList() {
-        if (artists == null || artists.isEmpty()) {
-            return Arrays.asList();
-        }
-        return Arrays.asList(artists.split("\\|"));
-    }
-
-    /**
-     * 获取格式化的艺术家字符串
-     */
     public String getFormattedArtists() {
         if (artists == null || artists.isEmpty()) {
             return "未知艺术家";
@@ -68,91 +57,85 @@ public class song {
         return artists.replace("|", ", ");
     }
 
-    /**
-     * 获取格式化的时长（mm:ss）
-     */
+    public String getDisplayName() {
+        if (translatedName == null || translatedName.isBlank() || translatedName.equals(name)) {
+            return name == null || name.isBlank() ? "未知歌曲" : name;
+        }
+        return translatedName;
+    }
+
+    public String getFormattedAlbum() {
+        return album == null || album.isBlank() ? "未知专辑" : album;
+    }
+
     public String getFormattedDuration() {
         if (duration == null || duration.isEmpty()) {
             return "00:00";
         }
+        return formatDuration(durationMillis());
+    }
+
+    public long durationMillis() {
+        if (duration == null || duration.isEmpty()) {
+            return 0L;
+        }
         try {
-            long millis = Long.parseLong(duration);
-            long seconds = millis / 1000;
-            long minutes = seconds / 60;
-            seconds = seconds % 60;
-            return String.format("%02d:%02d", minutes, seconds);
-        } catch (NumberFormatException e) {
-            return duration;
+            return Math.max(0L, Long.parseLong(duration));
+        } catch (NumberFormatException ignored) {
+            return 0L;
         }
     }
 
-    /**
-     * 是否可播放
-     */
-    public boolean isPlayable() {
-        return "0".equals(status);
+    public static String formatDuration(long millis) {
+        long totalSeconds = Math.max(0L, millis) / 1000L;
+        long hours = totalSeconds / 3600L;
+        long minutes = totalSeconds % 3600L / 60L;
+        long seconds = totalSeconds % 60L;
+        return hours > 0
+                ? String.format("%d:%02d:%02d", hours, minutes, seconds)
+                : String.format("%02d:%02d", minutes, seconds);
     }
 
-    /**
-     * 获取简短的描述
-     */
+    public boolean isPlayable() {
+        return playable && (id != null && !id.isBlank()
+                || url != null && !url.isBlank());
+    }
+
+    public boolean canAttemptPlayback() {
+        return playable || freeTrial;
+    }
+
+    public String availabilityLabel() {
+        if (paid) {
+            return "已购";
+        }
+        if (privateCloud) {
+            return "网盘";
+        }
+        if (freeTrial && !playable) {
+            return "试听";
+        }
+        if (fee == 4) {
+            return "数字专辑";
+        }
+        if (vip || fee == 1) {
+            return "VIP";
+        }
+        if (dirty) {
+            return "脏标";
+        }
+        return "";
+    }
+
     public String getShortDescription() {
         return name + " - " + getFormattedArtists();
     }
-    public String getlegalname(){
-        return sanitizeFileName(getShortDescription());
-    }
-
     @Override
     public String toString() {
         return String.format("歌曲: %s (ID: %s)\n艺术家: %s\n专辑: %s\n时长: %s\n状态: %s",
                 name, id, getFormattedArtists(),
-                album != null && !album.isEmpty() ? album : "未知",
+                getFormattedAlbum(),
                 getFormattedDuration(),
                 isPlayable() ? "可播放" : "不可播放");
-    }
-
-    public static String sanitizeFileName(String originalName) {
-        if (originalName == null || originalName.isEmpty()) {
-            return "unnamed_song";
-        }
-
-        // 移除开头的空白字符
-        String cleaned = originalName.trim();
-
-        // 移除或替换非法字符
-        cleaned = cleaned.replaceAll("[\\\\/:*?\"<>|]", "_"); // Windows非法字符
-
-        // 处理其他可能的问题字符
-        cleaned = cleaned.replaceAll("\\s+", " ");  // 多个空格合并为一个
-        cleaned = cleaned.replaceAll("^[.]+", "");  // 移除开头的点
-        cleaned = cleaned.replaceAll("[.]+$", "");  // 移除结尾的点
-
-        // 移除控制字符
-        cleaned = cleaned.replaceAll("[\\p{Cntrl}]", "");
-
-        // 限制文件名长度（避免超过255字符）
-        if (cleaned.length() > 200) {
-            cleaned = cleaned.substring(0, 200);
-        }
-
-        // 如果清理后为空，返回默认名称
-        if (cleaned.isEmpty()) {
-            return "unnamed_song_" + System.currentTimeMillis();
-        }
-
-        return cleaned;
-    }
-
-
-    // 使用Gson将对象转为JSON字符串
-    public String toJson() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(this);
-    }
-    // 从JSON字符串恢复对象
-    public static song fromJson(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, song.class);
     }
 }

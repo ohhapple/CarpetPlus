@@ -21,33 +21,60 @@
 package com.ohhapple.carpetplus.utils.music;
 
 import com.ohhapple.carpetplus.CarpetPlus;
+import com.ohhapple.carpetplus.utils.music.network.MusicPlayer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Path;
 import java.util.List;
 
-public class SongManager {
-    public static SongStorage songStorage;
+@Environment(EnvType.CLIENT)
+public final class SongManager {
+    private static SongStorage songStorage;
+    private static MusicPlaylistStorage playlistStorage;
+
+    private SongManager() {
+    }
 
     public static void initialize() {
-        // 获取模组的配置目录
-        Path configDir = FabricLoader.getInstance().getConfigDir();
-        Path modDataDir = configDir.resolve(CarpetPlus.MOD_ID);
-
+        MusicProviders.initialize();
+        MusicPlayer.setVolume(MusicSettings.getVolume());
+        Path modDataDir = FabricLoader.getInstance().getConfigDir().resolve(CarpetPlus.MOD_ID);
+        LocalEncryptedData.initialize();
         songStorage = new SongStorage(modDataDir);
-
+        playlistStorage = new MusicPlaylistStorage(modDataDir);
     }
 
-    public static List<String> listSongs() {
+    public static List<song> listSongs() {
         return songStorage.listSongs();
     }
-    public static song loadSong(String name) {
-        return songStorage.loadSong(name);
+
+    public static boolean saveSong(song track) {
+        return songStorage.saveSong(track);
     }
-    public static void saveSong(String name, song song) {
-        songStorage.saveSong(name, song);
+
+    public static boolean deleteSong(song track) {
+        return songStorage.deleteSong(track);
     }
-    public static boolean deleteSong(String name) {
-        return songStorage.deleteSong(name);
+
+    public static boolean isSongSaved(song track) {
+        return songStorage.isSongSaved(track);
+    }
+
+    public static List<SavedMusicPlaylist> listPlaylists() {
+        return playlistStorage.listPlaylists();
+    }
+
+    public static boolean isPlaylistSaved(String source, String playlistId) {
+        return playlistStorage.isSaved(source, playlistId);
+    }
+
+    public static boolean savePlaylist(String source, MusicPlaylist playlist) {
+        return playlistStorage.savePlaylist(source, playlist);
+    }
+
+    public static boolean deletePlaylist(String source, String playlistId) {
+        return playlistStorage.deletePlaylist(source, playlistId);
     }
 }

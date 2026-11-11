@@ -22,241 +22,169 @@ package com.ohhapple.carpetplus.utils.music;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
-public class SongStorage {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private final Path storageDir;
-    private final String suffix = ".carpetplus";
-    private static final String ENCRYPTION_KEY = "ohhapple";
+@Environment(EnvType.CLIENT)
+public final class SongStorage {
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            .create();
+    private static final Type SONG_LIST_TYPE = new TypeToken<List<song>>() {
+    }.getType();
+
+    private final Path catalogFile;
+    private final List<song> favorites = new ArrayList<>();
+    private boolean loaded;
 
     public SongStorage(Path modDataDir) {
-        this.storageDir = modDataDir.resolve("songs");
+        this.catalogFile = modDataDir.resolve("favorites");
+    }
+
+    public synchronized List<song> listSongs() {
+        load();
+        return favorites.stream()
+                .sorted(Comparator.comparing(song::getDisplayName, String.CASE_INSENSITIVE_ORDER))
+                .toList();
+    }
+
+    public synchronized boolean saveSong(song track) {
+        if (track == null || track.name == null || track.name.isBlank()) {
+            return false;
+        }
+        load();
+        favorites.removeIf(existing -> sameSong(existing, track));
+        favorites.add(metadataCopy(track));
+        return saveLocked();
+    }
+
+    public synchronized boolean deleteSong(song track) {
+        if (track == null) {
+            return false;
+        }
+        load();
+        boolean removed = favorites.removeIf(existing -> sameSong(existing, track));
+        if (removed) {
+            return saveLocked();
+        }
+        return false;
+    }
+
+    public synchronized boolean isSongSaved(song track) {
+        if (track == null) {
+            return false;
+        }
+        load();
+        return favorites.stream().anyMatch(existing -> sameSong(existing, track));
+    }
+
+    private void load() {
+        if (loaded) {
+            return;
+        }
+        loaded = true;
+        if (Files.isRegularFile(catalogFile)) {
+            readCatalog();
+        }
+    }
+
+    private void readCatalog() {
         try {
-            Files.createDirectories(storageDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 保存歌曲到文件
-    public void saveSong(String songName, song song) {
-        Path filePath = storageDir.resolve(songName + suffix);
-        try (Writer writer = Files.newBufferedWriter(filePath)) {
-            // 将歌曲对象转换为JSON字符串
-            String jsonContent = GSON.toJson(song);
-
-            // 简单异或加密
-            String encryptedContent = simpleXOREncrypt(jsonContent, ENCRYPTION_KEY);
-
-            // 写入加密后的内容
-            writer.write(encryptedContent);
-        } catch (IOException e) {
-            System.err.println("Save failed: " + e.getMessage());
-        }
-    }
-
-    // 从文件加载歌曲
-    public song loadSong(String songName) {
-        Path filePath = storageDir.resolve(songName + suffix);
-        if (!Files.exists(filePath)) {
-            System.err.println("File does not exist: " + filePath);
-            return null;
-        }
-
-        try (Reader reader = Files.newBufferedReader(filePath)) {
-            // 读取加密内容
-            StringBuilder encryptedContent = new StringBuilder();
-            int ch;
-            while ((ch = reader.read()) != -1) {
-                encryptedContent.append((char) ch);
+            byte[] data = LocalEncryptedData.readPortable(catalogFile);
+            if (data == null) {
+                return;
             }
-
-            // 解密内容
-            String decryptedContent = simpleXORDecrypt(encryptedContent.toString(), ENCRYPTION_KEY);
-
-            // 将解密后的内容解析为song对象
-            return GSON.fromJson(decryptedContent, song.class);
-        } catch (IOException e) {
-            System.err.println("Loading failed: " + e.getMessage());
-            return null;
-        }
-    }
-
-    // 列出所有保存的歌曲
-    public List<String> listSongs() {
-        List<String> songs = new ArrayList<>();
-        try(Stream<Path> stream = Files.list(storageDir);) {
-              stream.filter(path -> path.toString().endsWith(suffix))
-                    .forEach(path -> {
-                        String name = path.getFileName().toString();
-                        songs.add(name.substring(0, name.length() - suffix.length())); // 去掉后缀
-                    });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return songs;
-    }
-
-    /**
-     * 简单异或加密
-     * @param input 输入字符串
-     * @param key 密钥
-     * @return Base64编码的加密字符串
-     */
-    private String simpleXOREncrypt(String input, String key) {
-        byte[] inputBytes = input.getBytes();
-        byte[] keyBytes = key.getBytes();
-        byte[] outputBytes = new byte[inputBytes.length];
-
-        for (int i = 0; i < inputBytes.length; i++) {
-            outputBytes[i] = (byte) (inputBytes[i] ^ keyBytes[i % keyBytes.length]);
-        }
-
-        return Base64.getEncoder().encodeToString(outputBytes);
-    }
-
-    /**
-     * 简单异或解密
-     * @param encrypted Base64编码的加密字符串
-     * @param key 密钥
-     * @return 解密后的字符串
-     */
-    private String simpleXORDecrypt(String encrypted, String key) {
-        byte[] inputBytes = Base64.getDecoder().decode(encrypted);
-        byte[] keyBytes = key.getBytes();
-        byte[] outputBytes = new byte[inputBytes.length];
-
-        for (int i = 0; i < inputBytes.length; i++) {
-            outputBytes[i] = (byte) (inputBytes[i] ^ keyBytes[i % keyBytes.length]);
-        }
-
-        return new String(outputBytes);
-    }
-
-    /**
-     * 删除指定的歌曲文件
-     * @param songName 歌曲名称（不含后缀）
-     * @return 是否删除成功
-     */
-    public boolean deleteSong(String songName) {
-        Path filePath = storageDir.resolve(songName + suffix);
-
-        if (!Files.exists(filePath)) {
-            System.err.println("Deletion failed: File does not exist - " + filePath);
-            return false;
-        }
-
-        try {
-            Files.delete(filePath);
-            System.out.println("Successfully deleted song file: " + songName);
-            return true;
-        } catch (IOException e) {
-            System.err.println("Deletion failed: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * 删除指定的歌曲文件（带确认机制）
-     * @param songName 歌曲名称（不含后缀）
-     * @param confirm 是否确认删除，true时执行删除
-     * @return 是否删除成功
-     */
-    public boolean deleteSong(String songName, boolean confirm) {
-        if (!confirm) {
-            System.out.println("Delete operation has been canceled: " + songName);
-            return false;
-        }
-        return deleteSong(songName);
-    }
-
-    /**
-     * 检查歌曲文件是否存在
-     * @param songName 歌曲名称（不含后缀）
-     * @return 是否存在
-     */
-    public boolean songExists(String songName) {
-        Path filePath = storageDir.resolve(songName + suffix);
-        return Files.exists(filePath);
-    }
-
-    /**
-     * 批量删除歌曲文件
-     * @param songNames 歌曲名称列表
-     * @return 成功删除的数量
-     */
-    public int deleteSongs(List<String> songNames) {
-        int deletedCount = 0;
-
-        for (String songName : songNames) {
-            if (deleteSong(songName)) {
-                deletedCount++;
+            List<song> decoded = GSON.fromJson(
+                    new String(data, StandardCharsets.UTF_8), SONG_LIST_TYPE);
+            if (decoded != null) {
+                favorites.clear();
+                boolean removedVolatileLinks = false;
+                for (song track : decoded) {
+                    if (track != null) {
+                        removedVolatileLinks |= clearVolatileLinks(track);
+                        favorites.add(track);
+                    }
+                }
+                if (removedVolatileLinks) {
+                    saveLocked();
+                }
             }
+        } catch (IOException | RuntimeException ignored) {
+            favorites.clear();
         }
-
-        System.out.println("Batch deletion completed: successfully deleted " + deletedCount + "/" + songNames.size() + " files");
-        return deletedCount;
     }
 
-    /**
-     * 删除所有歌曲文件
-     * @return 成功删除的数量
-     */
-    public int deleteAllSongs() {
-        List<String> allSongs = listSongs();
-        return deleteSongs(allSongs);
-    }
-
-    /**
-     * 删除所有歌曲文件（带确认）
-     * @param confirm 确认短语，必须为"CONFIRM_DELETE_ALL"才能执行
-     * @return 成功删除的数量，如果确认失败返回-1
-     */
-    public int deleteAllSongs(String confirm) {
-        if (!"CONFIRM_DELETE_ALL".equals(confirm)) {
-            System.err.println("Deleting all songs requires confirmation phrase: CONFIRM_DELETE_ALL");
-            return -1;
-        }
-        return deleteAllSongs();
-    }
-
-    /**
-     * 重命名歌曲文件
-     * @param oldName 原歌曲名称
-     * @param newName 新歌曲名称
-     * @return 是否重命名成功
-     */
-    public boolean renameSong(String oldName, String newName) {
-        Path oldPath = storageDir.resolve(oldName + suffix);
-        Path newPath = storageDir.resolve(newName + suffix);
-
-        if (!Files.exists(oldPath)) {
-            System.err.println("Rename failed: source file does not exist - " + oldName);
-            return false;
-        }
-
-        if (Files.exists(newPath)) {
-            System.err.println("Rename failed: The destination file already exists - " + newName);
-            return false;
-        }
-
+    private boolean saveLocked() {
         try {
-            Files.move(oldPath, newPath);
-            System.out.println("Renamed successfully: " + oldName + " -> " + newName);
+            LocalEncryptedData.writePortable(catalogFile,
+                    GSON.toJson(favorites, SONG_LIST_TYPE)
+                            .getBytes(StandardCharsets.UTF_8));
             return true;
-        } catch (IOException e) {
-            System.err.println("Rename failed: " + e.getMessage());
+        } catch (IOException ignored) {
             return false;
         }
+    }
+
+    private static boolean sameSong(song left, song right) {
+        if (left == null || right == null) {
+            return false;
+        }
+        String leftSource = Objects.toString(left.source, NeteaseMusicProvider.ID);
+        String rightSource = Objects.toString(right.source, NeteaseMusicProvider.ID);
+        if (left.id != null && !left.id.isBlank() && right.id != null && !right.id.isBlank()) {
+            return leftSource.equals(rightSource) && left.id.equals(right.id);
+        }
+        return left.getShortDescription().equalsIgnoreCase(right.getShortDescription());
+    }
+
+    private static song metadataCopy(song source) {
+        song copy = new song();
+        copy.source = source.source;
+        copy.id = source.id;
+        copy.name = source.name;
+        copy.translatedName = source.translatedName;
+        copy.artists = source.artists;
+        copy.album = source.album;
+        copy.duration = source.duration;
+        copy.status = source.status;
+        copy.coverUrl = null;
+        copy.url = null;
+        copy.fee = source.fee;
+        copy.vip = source.vip;
+        copy.paid = source.paid;
+        copy.freeTrial = source.freeTrial;
+        copy.privateCloud = source.privateCloud;
+        copy.dirty = source.dirty;
+        copy.playable = source.playable;
+        return copy;
+    }
+
+    private static boolean clearVolatileLinks(song track) {
+        boolean changed = false;
+        if (track.url == null || track.url.isBlank()) {
+            track.url = null;
+        } else {
+            track.url = null;
+            changed = true;
+        }
+        if (track.coverUrl == null || track.coverUrl.isBlank()) {
+            track.coverUrl = null;
+        } else {
+            track.coverUrl = null;
+            changed = true;
+        }
+        return changed;
     }
 }

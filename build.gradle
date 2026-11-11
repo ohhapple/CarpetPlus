@@ -1,39 +1,161 @@
 plugins {
     id("maven-publish")
-    id("com.github.hierynomus.license").version("${hierynomus_license_version}").apply(false)
-    id("net.fabricmc.fabric-loom").version("${fabric_loom_version}").apply(false)
-    id("com.replaymod.preprocess").version("${preprocess_version}")
+    id("com.github.hierynomus.license").version("${hierynomus_license_version}")
+    id("net.fabricmc.fabric-loom").version("${fabric_loom_version}")
 }
 
-preprocess {
-    preprocess.strictExtraMappings.set(false)
-
-    def mc260100 = createNode('26.1', 26_01_00, '')
-
-    mc260100.link(mc260100, file('versions/mapping-26.1-26.1.txt'))
-}
-
-tasks.register('buildAndGather') {
-    subprojects {
-        dependsOn project.tasks.named('build').get()
+repositories {
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
     }
-    doFirst {
-        println 'Gathering builds'
-        def buildLibs = {
-            p -> p.buildDir.toPath().resolve('libs')
+    maven {
+        name = "Carpet"
+        url = "https://masa.dy.fi/maven"
+    }
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+        content {
+            includeGroup("com.github.gnembon")
         }
-        delete fileTree(buildLibs(rootProject)) {
-            include '*'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    implementation("com.github.gnembon:fabric-carpet:${project.carpet_core_version}") {
+        exclude group: "net.fabricmc", module: "fabric-loader"
+    }
+
+    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}")))
+
+    include(implementation("com.googlecode.soundlibs:jlayer:1.0.1.4"))
+}
+
+loom {
+    runConfigs.all {
+        ideConfigGenerated = true
+        runDir = "run"
+        // OpenJDK 25.0.1 C1 can crash while Minecraft loads resources in parallel.
+        // Development runs use C2 only; this does not affect the published mod.
+        vmArgs "-XX:-TieredCompilation"
+    }
+
+    runs {
+        mixinAudit {
+            server()
+            vmArgs "-Dcarpetamsaddition.mixin_audit=true"
+            ideConfigGenerated = false
         }
-        subprojects {
-            copy {
-                from(buildLibs(project)) {
-                    include '*.jar'
-                    exclude '*-dev.jar', '*-sources.jar'
-                }
-                into buildLibs(rootProject)
-                duplicatesStrategy DuplicatesStrategy.INCLUDE
-            }
+        mixinAuditClient {
+            client()
+            vmArgs "-Dcarpetamsaddition.mixin_audit=true"
+            ideConfigGenerated = false
+        }
+    }
+
+    accessWidenerPath = file("ohhapple.accesswidener")
+}
+
+group = project.maven_group
+
+def env = [
+        isRelease: System.getenv("BUILD_RELEASE") == "true",
+        isJitpack: System.getenv("JITPACK") == "true",
+        buildNumber: System.getenv("BUILD_ID")
+]
+
+def config = [
+        baseName: env.isJitpack ? "${project.archives_base_name}-mc${project.minecraft_version}" : project.archives_base_name,
+        modSuffix: env.isRelease ? "" : (env.buildNumber != null ? "+build.${env.buildNumber}" : "-dev"),
+        artifactSuffix: env.isRelease ? "" : "-dev"
+]
+
+base.archivesName = config.baseName
+String fullModVersion = project.mod_version + config.modSuffix
+String fullProjectVersion = env.isJitpack
+        ? "v${project.mod_version}${config.modSuffix}"
+        : "v${project.mod_version}-mc${project.minecraft_version}${config.modSuffix}"
+String fullArtifactVersion = env.isJitpack
+        ? "${project.mod_version}${config.artifactSuffix}"
+        : "${project.mod_version}-mc${project.minecraft_version}${config.artifactSuffix}"
+
+version = fullProjectVersion
+
+processResources {
+    from "ohhapple.accesswidener"
+    inputs.property "version", fullModVersion
+
+    filesMatching("fabric.mod.json") {
+        expand(
+                version: fullModVersion,
+                loader_version: project.loader_version,
+                carpet_dependency: project.carpet_dependency,
+                minecraft_dependency: project.minecraft_dependency
+        )
+    }
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    from(rootProject.file("LICENSE")) {
+        rename {
+            "${it}_${base.archivesName.get()}"
+        }
+    }
+}
+
+license {
+    header = rootProject.file("HEADER.txt")
+    include "**/*.java"
+    skipExistingHeaders = true
+
+    headerDefinitions {
+        SLASHSTAR_STYLE_NEWLINE {
+            firstLine = "/*"
+            beforeEachLine = " * "
+            endLine = " */" + System.lineSeparator()
+            afterEachLine = ""
+            skipLinePattern = null
+            firstLineDetectionPattern = "(\\s|\\t)*/\\*.*\$"
+            lastLineDetectionPattern = ".*\\*/(\\s|\\t)*\$"
+            allowBlankLines = false
+            isMultiline = true
+            padLines = false
+        }
+    }
+    mapping {
+        java = "SLASHSTAR_STYLE_NEWLINE"
+    }
+    ext {
+        name = project.mod_name
+        author = "ohhapple"
+        year = Calendar.getInstance().get(Calendar.YEAR).toString()
+    }
+}
+
+classes.dependsOn licenseFormatMain
+testClasses.dependsOn licenseFormatTest
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = base.archivesName.get()
+            version = fullArtifactVersion
         }
     }
 }

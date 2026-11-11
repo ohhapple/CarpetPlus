@@ -20,43 +20,60 @@
 
 package com.ohhapple.carpetplus.mixin.hooks.recipe;
 
-import com.llamalad7.mixinextras.sugar.Local;
+import com.ohhapple.carpetplus.CustomRecipes.RecipeMapFactory;
 import com.ohhapple.carpetplus.settings.ohhappleinit;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
-
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeMap;
-
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin {
-//    @Inject(method = "prepare(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)Lnet/minecraft/world/item/crafting/RecipeMap;", at = @At("RETURN"), cancellable = true)
-//    private void addCustomRecipes(ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfoReturnable<RecipeMap> cir) {
-//        SortedMap<Identifier, Recipe<?>> sortedMap = new TreeMap<>();
-//        SortedMap<Identifier, Recipe<?>> originalMap = cir.getReturnValue().values().stream().collect(Collectors.toMap(recipeEntry -> recipeEntry.id().location(), RecipeHolder::value, (a, b) -> a, TreeMap::new));
-//        sortedMap.putAll(originalMap);
-//        ohhappleinit.getInstance().registerCustomRecipes(sortedMap, ((RecipeManagerAccessor) this).getRegistries());
-//        List<RecipeHolder<?>> list = new ArrayList<>(sortedMap.size());
-//
-//        sortedMap.forEach((id, recipe) -> {
-//            ResourceKey<@NotNull Recipe<?>> registryKey = ResourceKey.create(Registries.RECIPE, id);
-//            RecipeHolder<?> recipeEntry = new RecipeHolder<>(registryKey, recipe);
-//            list.add(recipeEntry);
-//        });
-//
-//        cir.setReturnValue(RecipeMap.create(list));
-//    }
-    @Inject(method = "prepare(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)Lnet/minecraft/world/item/crafting/RecipeMap;", at = @At(value = "INVOKE", target = "Ljava/util/ArrayList;<init>(I)V",shift = At.Shift.BEFORE))
-    protected void prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller, CallbackInfoReturnable<RecipeMap> cir, @Local SortedMap<Identifier, Recipe<?>> sortedMap) {
-        ohhappleinit.getInstance().registerCustomRecipes(sortedMap, ((RecipeManagerAccessor) this).getRegistries());
+    @Shadow
+    @Final
+    @Mutable
+    private RecipeMap recipes;
+
+    @Shadow
+    @Final
+    @Mutable
+    private Collection<RecipeHolder<?>> learnableRecipes;
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void appendCustomRecipes(HolderLookup.Provider registries, CallbackInfo ci) {
+        SortedMap<Identifier, Recipe<?>> allRecipes = new TreeMap<>();
+        for (RecipeHolder<?> holder : this.recipes.values()) {
+            allRecipes.put(holder.id().identifier(), holder.value());
+        }
+
+        ohhappleinit.getInstance().registerCustomRecipes(allRecipes, registries);
+
+        List<RecipeHolder<?>> holders = new ArrayList<>(allRecipes.size());
+        allRecipes.forEach((id, recipe) -> {
+            ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, id);
+            holders.add(new RecipeHolder<>(key, recipe));
+        });
+
+        this.recipes = RecipeMapFactory.create(holders);
+        this.learnableRecipes = holders.stream()
+                .filter(holder -> !holder.value().isSpecial())
+                .toList();
     }
 }

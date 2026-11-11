@@ -23,6 +23,7 @@ package com.ohhapple.carpetplus.utils;
 import java.util.ArrayList;
 
 public class ChainableList<T> extends ArrayList<T> {
+    private static final long serialVersionUID = 1L;
     @SuppressWarnings("UnusedReturnValue")
     public ChainableList<T> cAdd(T element) {
         super.add(element);

@@ -25,8 +25,9 @@ import com.ohhapple.carpetplus.network.payloads.cp.modlist.sendmodlistC2S;
 import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeC2SPayload;
 import com.ohhapple.carpetplus.utils.MinecraftClientUtil;
 import com.ohhapple.carpetplus.utils.NetworkUtil;
+import com.ohhapple.carpetplus.utils.music.MusicChannelClientState;
+import com.ohhapple.carpetplus.utils.music.MusicQueue;
 import com.ohhapple.carpetplus.utils.music.SongManager;
-import com.ohhapple.carpetplus.utils.music.network.PlayMp3Url;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -79,10 +80,8 @@ public class CarpetPLUSClient implements ClientModInitializer {
 
     public void onDisconnect() {
         NetworkUtil.setServerSupport(false);
-        PlayMp3Url.stop();
+        MusicChannelClientState.clear();
+        MusicQueue.clearAndStop();
     }
 
-    public void onTick() {
-        // On client tick
-    }
 }

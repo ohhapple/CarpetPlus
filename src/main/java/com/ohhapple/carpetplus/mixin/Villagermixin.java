@@ -41,8 +41,5 @@ public abstract class Villagermixin extends AbstractVillager implements Reputati
     @Inject(method = "canBreed", at = @At("HEAD"), cancellable = true)
     public void isReadyToBreed(CallbackInfoReturnable<Boolean> cir){
         if (CarpetPlusSettings.VillageAlwaysBreed){cir.setReturnValue(true);}
-             //cir.setReturnValue(this.foodLevel + this.countFoodPointsInInventory() >= 12 && !this.isSleeping() && this.getAge() == 0);
-
-
     }
 }

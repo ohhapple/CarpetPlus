@@ -20,24 +20,34 @@
 
 package com.ohhapple.carpetplus.mixin.hooks.client;
 
+import com.ohhapple.carpetplus.settings.CarpetPlusSettings;
 import com.ohhapple.carpetplus.utils.music.MusicSearchScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin {
+    @Shadow
+    protected EditBox input;
 
-    @Inject(method = "handleChatInput", at = @At("HEAD"), cancellable = true)
-    private void onChatInput(String msg, boolean addToRecent, CallbackInfo ci) {
-        if (msg.trim().startsWith("++cp")) {
-            if (msg.trim().equals("++cp music")) {
-                MusicSearchScreen.open();
-            ci.cancel();
-            }
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+    private void carpetplus$openMusicFromChat(KeyEvent event,
+                                               CallbackInfoReturnable<Boolean> callbackInfo) {
+        if (!CarpetPlusSettings.AmethystShardMusicChannel
+                || !event.isConfirmation()
+                || !"++cp music".equals(input.getValue().trim())) {
+            return;
         }
+        input.setValue("");
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.execute(MusicSearchScreen::open);
+        callbackInfo.setReturnValue(true);
     }
 }

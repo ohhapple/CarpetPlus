@@ -23,6 +23,7 @@ package com.ohhapple.carpetplus.utils;
 import java.util.HashMap;
 
 public class ChainableHashMap<K, V> extends HashMap<K, V> {
+    private static final long serialVersionUID = 1L;
     @SuppressWarnings("UnusedReturnValue")
     public ChainableHashMap<K, V> cPut(K key, V value) {
         super.put(key, value);

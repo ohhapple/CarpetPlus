@@ -20,6 +20,7 @@
 
 package com.ohhapple.carpetplus.mixin.hooks.server;
 
+import com.ohhapple.carpetplus.network.payloads.cp.music.MusicChannelServerSync;
 import com.ohhapple.carpetplus.settings.ohhappleinit;
 import com.ohhapple.carpetplus.utils.MinecraftServerUtil;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +31,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
+    @Inject(method = "tickServer", at = @At("TAIL"))
+    private void carpetplus$tickSharedMusic(CallbackInfo callbackInfo) {
+        MusicChannelServerSync.tick();
+    }
+
     @Inject(method = "loadLevel", at = @At("TAIL"))
     private void afterServerLoadWorld(CallbackInfo ci) {
         if (MinecraftServerUtil.serverIsRunning()) {
