@@ -59,12 +59,11 @@ public abstract class WindChargemixin extends AbstractWindCharge {
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void modifyExplosionBehavior(CallbackInfo ci) {
-        // 创建新的爆炸行为实例
         if (CarpetPlusSettings.SuperWindCharge){
             EXPLOSION_DAMAGE_CALCULATOR = new SimpleExplosionDamageCalculator(
-                    true, // 修改参数
-                    true,  // 修改参数
-                    Optional.of(10F), // 增大爆炸威力
+                    true,
+                    true,
+                    Optional.of(10F),
                     BuiltInRegistries.BLOCK.get(BlockTags.BLOCKS_WIND_CHARGE_EXPLOSIONS).map(Function.identity())
             );
         }

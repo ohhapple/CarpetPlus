@@ -30,9 +30,6 @@ import net.minecraft.commands.CommandSourceStack;
 import static carpet.api.settings.RuleCategory.*;
 import static com.ohhapple.carpetplus.settings.PLUSRuleCategory.PLUS_NETWORK;
 
-/**
- * Here is your example Settings class you can plug to use carpetmod /carpet settings command
- */
 public class CarpetPlusSettings
 {
     public enum ComparatorOptions {
@@ -79,12 +76,11 @@ public class CarpetPlusSettings
         public String description() { return "You must choose a value from 1 to 1000";}
     }
 
-    // 验证器类
     public static class ViewDistanceValidator extends Validator<Integer> {
         @Override
         public Integer validate(CommandSourceStack source, CarpetRule<Integer> currentRule, Integer newValue, String string) {
             if (newValue < 2 || newValue > 32) {
-                return 10; // 默认值
+                return 10;
             }
             return newValue;
         }
@@ -95,26 +91,19 @@ public class CarpetPlusSettings
         }
     }
 
-
-    //--------------------------------------------------------------------------------------
-    //风弹螺旋丸手里剑
     @Rule(
             categories = {OHHAPPLE, FEATURE}
     )
     public static boolean SuperWindCharge = false;
-    //村民一直繁殖
     @Rule(
             categories = {OHHAPPLE, FEATURE}
     )
     public static boolean VillageAlwaysBreed = false;
-    //--------------------------------------------------------------------------------------
-    //超级海绵
     @Rule(
             options = {"false","water", "lava", "both"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static String SuperSponge = "false";
-    //超级海绵半径
     @Rule(
             options = {"0","6", "10", "20","100"},
             strict = false,
@@ -122,63 +111,47 @@ public class CarpetPlusSettings
             validators = Validators.NonNegativeNumber.class
     )
     public static int SuperSpongeRadius = 6;
-    //--------------------------------------------------------------------------------------
-    //混凝土粉末烧玻璃
     @RecipeRule
     @Rule(categories = {OHHAPPLE, FEATURE},validators = RecipeRuleObserver.class)
     public static boolean concreteBurnedIntoglass = false;
-    //---------------------------------------------------------------------------------------
-    //药水可堆叠
     @Rule(
             options = {"1","16", "64"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static int StackablePotion = 1;
-    //附魔书可堆叠
     @Rule(
             options = {"1","16", "64"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static int StackableEnchantedBook = 1;
-    //不死图腾可堆叠totem_of_undying
     @Rule(
             options = {"1","16", "64"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static int StackableTotemOfUndying = 1;
-    //奶桶可堆叠
     @Rule(
             options = {"1","16", "64"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static int StackableMilkBucket = 1;
-    //装备不可破坏
     @Rule(
             categories = {OHHAPPLE, FEATURE}
     )
     public static boolean EquipmentUnbreak = false;
-    //--------------------------------------------------------------------------------------
-    //潜影盒嵌套
     @Rule(
             options = {"false","player", "redstone","both"},
             categories = {OHHAPPLE, FEATURE}
     )
     public static String ShulkerBoxNested = "false";
-    //--------------------------------------------------------------------------------------
-    //CarpetPlus网络协议处理总开关
     @Rule(
             categories = {OHHAPPLE, PLUS_NETWORK}
     )
     public static boolean CarpetPlusNetwork = true;
-    //--------------------------------------------------------------------------------------
-    //获取客户端玩家FPS
     @Rule(
             options = {"0", "1", "2", "3", "4", "ops", "true", "false"},
             categories = {OHHAPPLE,PLUS_NETWORK, COMMAND}
     )
     public static String GetPlayerFps = "false";
-    //--------------------------------------------------------------------------------------
-    //紫水晶碎片打开音乐频道GUI
     @Rule(
             categories = {OHHAPPLE, CLIENT}
     )

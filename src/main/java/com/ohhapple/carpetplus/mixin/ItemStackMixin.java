@@ -25,7 +25,6 @@ import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -39,13 +38,13 @@ import java.util.function.Consumer;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements DataComponentHolder, ItemInstance {
-    //耐久消耗
     @Inject(
             method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/server/level/ServerPlayer;Ljava/util/function/Consumer;)V",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void HurtAndBreak(int i, ServerLevel serverLevel, @Nullable ServerPlayer serverPlayer, Consumer<Item> consumer, CallbackInfo ci){
+    private void preventDurabilityLoss(int amount, ServerLevel serverLevel, @Nullable ServerPlayer serverPlayer,
+                                       Consumer<ItemStack> breakCallback, CallbackInfo ci) {
         if(CarpetPlusSettings.EquipmentUnbreak){ci.cancel();}
     }
 
@@ -54,7 +53,6 @@ public abstract class ItemStackMixin implements DataComponentHolder, ItemInstanc
     public int getMaxStackSize() {
         ItemStack self = (ItemStack)(Object)this;
         if (CarpetPlusSettings.StackablePotion!=1) {
-            // 检查是否是药水物品
             if (self.is(Items.POTION) ||
                     self.is(Items.SPLASH_POTION) ||
                     self.is(Items.LINGERING_POTION)) {
@@ -63,21 +61,18 @@ public abstract class ItemStackMixin implements DataComponentHolder, ItemInstanc
         }
 
         if (CarpetPlusSettings.StackableEnchantedBook!=1) {
-            // 检查是否是附魔书物品
             if (self.is(Items.ENCHANTED_BOOK)) {
                 return CarpetPlusSettings.StackableEnchantedBook;
             }
         }
 
         if (CarpetPlusSettings.StackableTotemOfUndying!=1) {
-            // 检查是否是不死图腾物品
             if (self.is(Items.TOTEM_OF_UNDYING)) {
                 return CarpetPlusSettings.StackableTotemOfUndying;
             }
         }
 
         if (CarpetPlusSettings.StackableMilkBucket!=1) {
-            // 检查是否是奶桶物品
             if (self.is(Items.MILK_BUCKET)) {
                 return CarpetPlusSettings.StackableMilkBucket;
             }

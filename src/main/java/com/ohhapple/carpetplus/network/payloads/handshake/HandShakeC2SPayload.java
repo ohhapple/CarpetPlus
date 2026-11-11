@@ -23,6 +23,7 @@ package com.ohhapple.carpetplus.network.payloads.handshake;
 import com.ohhapple.carpetplus.CarpetPlus;
 import com.ohhapple.carpetplus.network.PLUS_CustomPayload;
 import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
+import com.ohhapple.carpetplus.network.payloads.cp.music.ServerMusicChannelListS2CPayload;
 import com.ohhapple.carpetplus.settings.ohhappleinit;
 import com.ohhapple.carpetplus.utils.NetworkUtil;
 import com.ohhapple.carpetplus.utils.PlayerUtil;
@@ -87,6 +88,7 @@ public class HandShakeC2SPayload extends PLUS_CustomPayload {
 
             if (player != null) {
                 ohhappleinit.getInstance().sendS2CPacketOnHandShake(player);
+                ServerMusicChannelListS2CPayload.sendTo(player);
             } else {
                 ohhappleinit.LOGGER.warn("Could not find player entity for UUID: {}", this.playerUuid);
             }

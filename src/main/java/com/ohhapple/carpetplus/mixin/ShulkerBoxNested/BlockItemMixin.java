@@ -45,9 +45,7 @@ public class BlockItemMixin extends Item {
         BlockItem self = (BlockItem)(Object)this;
         Block block = self.getBlock();
 
-        // 检查是否是潜影盒方块
         if (block instanceof ShulkerBoxBlock) {
-            // 根据规则决定是否允许放入容器
             if ("both".equals(CarpetPlusSettings.ShulkerBoxNested)||"player".equals(CarpetPlusSettings.ShulkerBoxNested)) {cir.setReturnValue(true);}
         }
     }

@@ -22,9 +22,13 @@ package com.ohhapple.carpetplus.network.payloads.cp.music;
 
 import com.ohhapple.carpetplus.network.PLUS_CustomPayload;
 import com.ohhapple.carpetplus.network.PLUS_PayloadManager;
+import com.ohhapple.carpetplus.settings.CarpetPlusSettings;
 import com.ohhapple.carpetplus.utils.NetworkUtil;
+import com.ohhapple.carpetplus.utils.PlayerUtil;
+import com.ohhapple.carpetplus.utils.music.MusicChannelManager;
 import com.ohhapple.carpetplus.utils.music.song;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
 public class sharemusicC2Spayload extends PLUS_CustomPayload {
     private static final String ID = PLUS_PayloadManager.PacketId.CP_SHARE_MUSIC_C2S.getId();
@@ -39,32 +43,31 @@ public class sharemusicC2Spayload extends PLUS_CustomPayload {
     public sharemusicC2Spayload(FriendlyByteBuf buf) {
         super(ID);
         this.name = buf.readUtf();
-        song s = new song();
-        s.id = buf.readUtf();
-        s.name = buf.readUtf();
-        s.artists = buf.readUtf();
-        s.album = buf.readUtf();
-        s.duration = buf.readUtf();
-        s.status = buf.readUtf();
-        s.url = buf.readUtf();
-        this.song = s;
+        this.song = MusicSongCodec.read(buf);
     }
     @Override
     protected void writeData(FriendlyByteBuf buf) {
         buf.writeUtf(name);
-        buf.writeUtf(song.id != null ? song.id : "");
-        buf.writeUtf(song.name != null ? song.name : "");
-        buf.writeUtf(song.artists != null ? song.artists : "");
-        buf.writeUtf(song.album != null ? song.album : "");
-        buf.writeUtf(song.duration != null ? song.duration : "");
-        buf.writeUtf(song.status != null ? song.status : "");
-        buf.writeUtf(song.url != null ? song.url : "");
+        MusicSongCodec.write(buf, song);
     }
 
     @Override
     public void handle() {
-        NetworkUtil.executeOnServerThread(() ->{
-            NetworkUtil.broadcastDataPack(sharemusicS2Cpayload.create(name,song),NetworkUtil.SendMode.NEED_SUPPORT);
+        NetworkUtil.executeOnServerThread(() -> {
+            if (!CarpetPlusSettings.AmethystShardMusicChannel) {
+                return;
+            }
+            ServerPlayer sender = PlayerUtil.getServerPlayerEntity(this.name);
+            if (sender == null || !MusicChannelManager.isInChannel(sender.getUUID())) {
+                return;
+            }
+            if (!MusicChannelManager.addSong(sender.getUUID(), this.name, this.song)) {
+                return;
+            }
+            String channelId = MusicChannelManager.getCurrentChannelId(sender.getUUID());
+            if (channelId != null) {
+                MusicChannelServerSync.broadcastQueue(channelId);
+            }
         });
     }
 

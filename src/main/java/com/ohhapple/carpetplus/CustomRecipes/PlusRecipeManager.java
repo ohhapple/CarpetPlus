@@ -64,7 +64,10 @@ public class PlusRecipeManager {
     }
 
     private RecipeHolder<?> deserializeRecipe(ResourceKey<@NotNull Recipe<?>> key, JsonObject json, HolderLookup.Provider registries) {
-        return new RecipeHolder<>(key, Recipe.CODEC.parse(registries.createSerializationContext(JsonOps.INSTANCE), json).getOrThrow(JsonParseException::new));
+        Recipe<?> recipe = Recipe.DIRECT_CODEC
+                .parse(registries.createSerializationContext(JsonOps.INSTANCE), json)
+                .getOrThrow(JsonParseException::new);
+        return new RecipeHolder<>(key, recipe);
     }
 
     private void registerAllRecipes(Map<Identifier, JsonElement> recipeMap) {

@@ -22,10 +22,12 @@ package com.ohhapple.carpetplus.network;
 
 import com.ohhapple.carpetplus.network.payloads.PLUS_UnknownPayload;
 import com.ohhapple.carpetplus.network.payloads.cp.modlist.sendmodlistC2S;
-import com.ohhapple.carpetplus.network.payloads.cp.music.listenmusicS2C;
+import com.ohhapple.carpetplus.network.payloads.cp.music.MusicChannelC2SPayload;
+import com.ohhapple.carpetplus.network.payloads.cp.music.MusicChannelQueueC2SPayload;
+import com.ohhapple.carpetplus.network.payloads.cp.music.ServerMusicChannelListS2CPayload;
+import com.ohhapple.carpetplus.network.payloads.cp.music.ServerMusicChannelPlaybackS2CPayload;
+import com.ohhapple.carpetplus.network.payloads.cp.music.ServerMusicChannelQueueS2CPayload;
 import com.ohhapple.carpetplus.network.payloads.cp.music.sharemusicC2Spayload;
-import com.ohhapple.carpetplus.network.payloads.cp.music.sharemusicS2Cpayload;
-import com.ohhapple.carpetplus.network.payloads.cp.music.sharemusiclistC2Spayload;
 import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeC2SPayload;
 import com.ohhapple.carpetplus.network.payloads.handshake.HandShakeS2CPayload;
 import com.ohhapple.carpetplus.network.payloads.rule.commandGetClientPlayerFPS.ClientPlayerFpsPayload_C2S;
@@ -46,18 +48,18 @@ public class PLUS_PayloadManager {
     public enum PacketId {
         UNKNOWN("unknown"),
 
-        //c2s
         HANDSHAKE_C2S("handshake_c2s"),
         CLIENT_PLAYER_FPS_C2S("client_player_fps_c2s"),
         CP_SHARE_MUSIC_C2S("cp_share_music_c2s"),
+        MUSIC_CHANNEL_C2S("music_channel_c2s"),
+        MUSIC_CHANNEL_QUEUE_C2S("music_channel_queue_c2s"),
         CP_MODLIST_C2S("cp_modlist_c2s"),
-        CP_SHARE_MUSIC_LIST_C2S("share_music_list_c2s"),
 
-        //s2c
         HANDSHAKE_S2C("handshake_s2c"),
         CLIENT_PLAYER_FPS_S2C("client_player_fps_s2c"),
-        CP_LISTEN_MUSIC_S2C("cp_listen_music_s2c"),
-        CP_SHARE_MUSIC_S2C("cp_share_music_s2c");
+        MUSIC_CHANNEL_LIST_S2C("music_channel_list_s2c"),
+        MUSIC_CHANNEL_QUEUE_S2C("music_channel_queue_s2c"),
+        MUSIC_CHANNEL_PLAYBACK_S2C("music_channel_playback_s2c");
 
         private final String id;
 
@@ -70,48 +72,40 @@ public class PLUS_PayloadManager {
         }
     }
 
-    /*
-     * Register Payloads
-     */
     public static void registerPayloads() {
-        // C2S
         registerPayload(PacketId.HANDSHAKE_C2S.getId(), HandShakeC2SPayload::new);
         registerPayload(PacketId.CLIENT_PLAYER_FPS_C2S.getId(), ClientPlayerFpsPayload_C2S::new);
-        registerPayload(PacketId.CP_SHARE_MUSIC_LIST_C2S.getId(), sharemusiclistC2Spayload::new);
         registerPayload(PacketId.CP_MODLIST_C2S.getId(), sendmodlistC2S::new);
         registerPayload(PacketId.CP_SHARE_MUSIC_C2S.getId(), sharemusicC2Spayload::new);
+        registerPayload(PacketId.MUSIC_CHANNEL_C2S.getId(), MusicChannelC2SPayload::new);
+        registerPayload(PacketId.MUSIC_CHANNEL_QUEUE_C2S.getId(), MusicChannelQueueC2SPayload::new);
 
-        // S2C
         registerPayload(PacketId.HANDSHAKE_S2C.getId(), HandShakeS2CPayload::new);
         registerPayload(PacketId.CLIENT_PLAYER_FPS_S2C.getId(), ClientPlayerFpsPayload_S2C::new);
-        registerPayload(PacketId.CP_LISTEN_MUSIC_S2C.getId(), listenmusicS2C::new);
-        registerPayload(PacketId.CP_SHARE_MUSIC_S2C.getId(), sharemusicS2Cpayload::new);
+        registerPayload(PacketId.MUSIC_CHANNEL_LIST_S2C.getId(), ServerMusicChannelListS2CPayload::new);
+        registerPayload(PacketId.MUSIC_CHANNEL_QUEUE_S2C.getId(), ServerMusicChannelQueueS2CPayload::new);
+        registerPayload(PacketId.MUSIC_CHANNEL_PLAYBACK_S2C.getId(), ServerMusicChannelPlaybackS2CPayload::new);
 
-
-        // Both
         registerPayload(PacketId.UNKNOWN.getId(), _ -> new PLUS_UnknownPayload());
     }
 
-    /*
-     * Register Payload Handlers
-     */
-    // C2S
     private static void registerC2SHandlers(@NotNull PayloadHandlerChain chain) {
         chain.put(HandShakeC2SPayload.class, HandShakeC2SPayload::handle);
         chain.put(PLUS_UnknownPayload.class, PLUS_UnknownPayload::handle);
         chain.put(ClientPlayerFpsPayload_C2S.class, ClientPlayerFpsPayload_C2S::handle);
-        chain.put(sharemusiclistC2Spayload.class, sharemusiclistC2Spayload::handle);
         chain.put(sendmodlistC2S.class, sendmodlistC2S::handle);
         chain.put(sharemusicC2Spayload.class, sharemusicC2Spayload::handle);
+        chain.put(MusicChannelC2SPayload.class, MusicChannelC2SPayload::handle);
+        chain.put(MusicChannelQueueC2SPayload.class, MusicChannelQueueC2SPayload::handle);
     }
 
-    // S2C
     private static void registerS2CHandlers(@NotNull PayloadHandlerChain chain) {
         chain.put(HandShakeS2CPayload.class, HandShakeS2CPayload::handle);
         chain.put(PLUS_UnknownPayload.class, PLUS_UnknownPayload::handle);
         chain.put(ClientPlayerFpsPayload_S2C.class, ClientPlayerFpsPayload_S2C::handle);
-        chain.put(listenmusicS2C.class, listenmusicS2C::handle);
-        chain.put(sharemusicS2Cpayload.class, sharemusicS2Cpayload::handle);
+        chain.put(ServerMusicChannelListS2CPayload.class, ServerMusicChannelListS2CPayload::handle);
+        chain.put(ServerMusicChannelQueueS2CPayload.class, ServerMusicChannelQueueS2CPayload::handle);
+        chain.put(ServerMusicChannelPlaybackS2CPayload.class, ServerMusicChannelPlaybackS2CPayload::handle);
     }
 
     private static void registerPayload(String packetId, Function<FriendlyByteBuf, PLUS_CustomPayload> constructor) {

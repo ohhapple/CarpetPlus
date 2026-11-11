@@ -22,6 +22,7 @@ package com.ohhapple.carpetplus.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 
@@ -37,7 +38,6 @@ public class CarpetPlusTranslations
     {
         InputStream langFile = CarpetPlusTranslations.class.getClassLoader().getResourceAsStream("assets/carpetplus/lang/%s.json".formatted(lang));
         if (langFile == null) {
-            // we don't have that language
             return Collections.emptyMap();
         }
         String jsonData;
@@ -46,7 +46,7 @@ public class CarpetPlusTranslations
         } catch (IOException e) {
             return Collections.emptyMap();
         }
-        Gson gson = new GsonBuilder().setLenient().create(); // lenient allows for comments
+        Gson gson = new GsonBuilder().setStrictness(Strictness.LENIENT).create();
         return gson.fromJson(jsonData, new TypeToken<Map<String, String>>() {}.getType());
     }
 }

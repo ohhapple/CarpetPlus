@@ -45,10 +45,6 @@ public class NetworkUtil {
         NEED_SUPPORT
     }
 
-    public static void broadcastDataPack(PLUS_CustomPayload payload, SendMode sendMode) {
-        MinecraftServerUtil.getOnlinePlayers().forEach(player -> sendS2CPacket(player, payload, sendMode));
-    }
-
     public static void sendS2CPacket(ServerPlayer player, PLUS_CustomPayload payload, SendMode sendMode) {
         boolean shouldSend = switch (sendMode) {
             case FORCE -> true;

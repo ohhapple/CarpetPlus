@@ -40,7 +40,6 @@ public abstract class ShulkerBoxBlockEntityMixin extends RandomizableContainerBl
         super(blockEntityType, blockPos, blockState);
     }
 
-    //漏斗可以放入潜影盒
     @Inject(method = "canPlaceItemThroughFace", at = @At("HEAD"), cancellable = true)
     public void canPlaceItemThroughFace(int i, ItemStack itemStack, Direction direction, CallbackInfoReturnable<Boolean> cir){
         if("both".equals(CarpetPlusSettings.ShulkerBoxNested)||"redstone".equals(CarpetPlusSettings.ShulkerBoxNested)){cir.setReturnValue(true);}
